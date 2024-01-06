@@ -9,14 +9,14 @@ It provides a convenient way to make requests to Jira for creating, updating, or
 
 {:ok, issue} =
   Jiraffe.client("https://example.atlassian.net", "my-access-token")
-  |> Jiraffe.Issue.get("TEST-1")
+  |> Jiraffe.Issues.get("TEST-1")
 
 # Using email and password/token
 {:ok, issue} =
   Jiraffe.client(
     "https://example.atlassian.net",
     basic: %{email: "test@example.net", password: "secret"}
-  ) |> Jiraffe.Issue.get("TEST-1")
+  ) |> Jiraffe.Issues.get("TEST-1")
 ```
 
 # License

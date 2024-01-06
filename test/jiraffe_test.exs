@@ -1,4 +1,5 @@
 defmodule JiraffeTest do
+  @moduledoc false
   use ExUnit.Case
   doctest Jiraffe
 
