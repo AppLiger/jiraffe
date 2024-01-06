@@ -1,21 +1,24 @@
 # Jiraffe
 
-**TODO: Add description**
+Jiraffe is an Elixir client library for interacting with Atlassian's Jira REST API.
+It provides a convenient way to make requests to Jira for creating, updating, or retrieving issues, among other operations.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `jiraffe` to your list of dependencies in `mix.exs`:
+# Example
 
 ```elixir
-def deps do
-  [
-    {:jiraffe, "~> 0.1.0"}
-  ]
-end
+
+{:ok, issue} =
+  Jiraffe.client("https://example.atlassian.net", "my-access-token")
+  |> Jiraffe.Issue.get("TEST-1")
+
+# Using email and password/token
+{:ok, issue} =
+  Jiraffe.client(
+    "https://example.atlassian.net",
+    basic: %{email: "test@example.net", password: "secret"}
+  ) |> Jiraffe.Issue.get("TEST-1")
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/jiraffe>.
+# License
 
+This project is licensed under the MIT License
