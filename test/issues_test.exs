@@ -49,12 +49,24 @@ defmodule Jiraffe.IssuesTest do
     end
 
     test "returns the issue with the given ID", %{client: client} do
-      assert {:ok, @issue} ==
+      assert {:ok,
+              %{
+                "fields" => %{"description" => "Bar", "summary" => "Foo"},
+                "id" => "10002",
+                "key" => "ED-1",
+                "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+              }} ==
                Jiraffe.Issues.get(client, "10002")
     end
 
     test "returns the issue with the given ID when given additional params", %{client: client} do
-      assert {:ok, @issue} ==
+      assert {:ok,
+              %{
+                "fields" => %{"description" => "Bar", "summary" => "Foo"},
+                "id" => "10002",
+                "key" => "ED-1",
+                "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+              }} ==
                Jiraffe.Issues.get(client, "10002",
                  expand: "names,schema",
                  properties: ["prop1", "prop2"]

@@ -1,6 +1,20 @@
 defmodule Jiraffe.Issues do
   @moduledoc """
-  Jira Issue
+  This resource represents Jira issues. Use it to:
+
+    - create or edit issues, individually or in bulk.
+    - retrieve metadata about the options for creating or editing issues.
+    - delete an issue.
+    - assign a user to an issue.
+    - get issue changelogs.
+    - send notifications about an issue.
+    - get details of the transitions available for an issue.
+    - transition an issue.
+    - Archive issues.
+    - Unarchive issues.
+    - Export archived issues.
+
+  [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/)
   """
   alias Jiraffe.{Client, Error}
 
