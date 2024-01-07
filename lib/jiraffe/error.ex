@@ -10,6 +10,15 @@ defmodule Jiraffe.Error do
 
   defexception [:reason, :details]
 
+  @spec new(details :: map() | String.t()) :: t()
+  def new(details) when not is_atom(details) do
+    %__MODULE__{
+      reason: :general,
+      details: details
+    }
+  end
+
+  @spec new(reason :: atom(), details :: map() | String.t()) :: t()
   def new(reason, details \\ %{}) do
     %__MODULE__{
       reason: reason,

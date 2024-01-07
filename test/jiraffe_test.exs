@@ -160,7 +160,7 @@ defmodule JiraffeTest do
             status: 200
           )
 
-        %{url: "https://example.atlassian.net/test"} = asdf ->
+        %{url: "https://example.atlassian.net/test"} ->
           json(%{foo: "bar"}, status: 200)
       end)
 

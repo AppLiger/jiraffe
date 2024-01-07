@@ -4,6 +4,18 @@ defmodule Jiraffe.ErrorTest do
 
   doctest Jiraffe.Error
 
+  describe "new/1" do
+    test "returns a new Jiraffe.Error struct when given only the reason" do
+      assert %Jiraffe.Error{reason: :foo, details: %{}} ==
+               Jiraffe.Error.new(:foo)
+    end
+
+    test "returns a new Jiraffe.Error struct when given details instead of reason" do
+      assert %Jiraffe.Error{reason: :general, details: %{bar: "baz"}} ==
+               Jiraffe.Error.new(%{bar: "baz"})
+    end
+  end
+
   describe "new/2" do
     test "returns a new Jiraffe.Error struct" do
       assert %Jiraffe.Error{reason: :foo, details: %{bar: "baz"}} ==

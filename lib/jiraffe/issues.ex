@@ -43,4 +43,30 @@ defmodule Jiraffe.Issues do
         {:error, Error.new(reason)}
     end
   end
+
+  @doc """
+  Creates upto 50 issues and, where the option to create subtasks is enabled in Jira, subtasks.
+
+  [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-bulk-post)
+  """
+  @spec bulk_create(
+          client :: Client.t(),
+          body :: map()
+        ) :: {:ok, map()} | error()
+  def bulk_create(client, body) do
+    case Jiraffe.post(
+           client,
+           "/rest/api/2/issue/bulk",
+           body
+         ) do
+      {:ok, %{status: 201, body: result}} ->
+        {:ok, result}
+
+      {:ok, response} ->
+        {:error, Error.new(:cannot_create_issues, response)}
+
+      {:error, reason} ->
+        {:error, Error.new(reason)}
+    end
+  end
 end
