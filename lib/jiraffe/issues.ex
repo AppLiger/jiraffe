@@ -69,4 +69,29 @@ defmodule Jiraffe.Issues do
         {:error, Error.new(reason)}
     end
   end
+
+  @doc """
+  Edits an issue. A transition may be applied and issue properties updated as part of the edit.
+  """
+  @spec update(
+          client :: Client.t(),
+          id :: String.t(),
+          body :: map()
+        ) :: {:ok, %{id: String.t()}} | error()
+  def update(client, id, body) do
+    case Jiraffe.put(
+           client,
+           "/rest/api/2/issue/#{id}",
+           body
+         ) do
+      {:ok, %{body: body, status: 204}} ->
+        {:ok, body}
+
+      {:ok, response} ->
+        {:error, Error.new(:cannot_update_issue, response)}
+
+      {:error, reason} ->
+        {:error, Error.new(reason)}
+    end
+  end
 end
