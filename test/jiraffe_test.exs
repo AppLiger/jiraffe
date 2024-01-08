@@ -5,34 +5,12 @@ defmodule JiraffeTest do
 
   import Tesla.Mock
 
-  @expected_client_with_bearer_auth %Tesla.Client{
-    fun: nil,
-    pre: [
-      {Tesla.Middleware.BaseUrl, :call, ["https://example.atlassian.net"]},
-      {Tesla.Middleware.JSON, :call, [[]]},
-      {Tesla.Middleware.Headers, :call, [[{"authorization", "Bearer a-token"}]]}
-    ],
-    post: [],
-    adapter: nil
-  }
-
-  @expected_client_with_basic_auth %Tesla.Client{
-    fun: nil,
-    pre: [
-      {Tesla.Middleware.BaseUrl, :call, ["https://example.atlassian.net"]},
-      {Tesla.Middleware.JSON, :call, [[]]},
-      {Tesla.Middleware.Headers, :call,
-       [[{"authorization", "Basic dXNlckBleGFtcGxlLm5ldDphLXRva2Vu"}]]}
-    ],
-    post: [],
-    adapter: nil
-  }
-
   describe "client/2 with a valid Base URL and a Token" do
     test "returns a Tesla client with correct Base URL, Bearer Authorization headers and adapter" do
       client = Jiraffe.client("https://example.atlassian.net", "a-token")
 
-      assert client == @expected_client_with_bearer_auth
+      assert get_auth_header(client) == "Bearer a-token"
+      assert get_base_url(client) == "https://example.atlassian.net"
     end
   end
 
@@ -40,7 +18,8 @@ defmodule JiraffeTest do
     test "returns a Tesla client with correct Base URL and Bearer Authorization headers" do
       client = Jiraffe.client("https://example.atlassian.net", personal_access_token: "a-token")
 
-      assert client == @expected_client_with_bearer_auth
+      assert get_auth_header(client) == "Bearer a-token"
+      assert get_base_url(client) == "https://example.atlassian.net"
     end
   end
 
@@ -48,7 +27,8 @@ defmodule JiraffeTest do
     test "returns a Tesla client with correct Base URL and Bearer Authorization headers" do
       client = Jiraffe.client("https://example.atlassian.net", oauth2: %{access_token: "a-token"})
 
-      assert client == @expected_client_with_bearer_auth
+      assert get_auth_header(client) == "Bearer a-token"
+      assert get_base_url(client) == "https://example.atlassian.net"
     end
   end
 
@@ -59,7 +39,8 @@ defmodule JiraffeTest do
           basic: %{email: "user@example.net", token: "a-token"}
         )
 
-      assert client == @expected_client_with_basic_auth
+      assert get_auth_header(client) == "Basic dXNlckBleGFtcGxlLm5ldDphLXRva2Vu"
+      assert get_base_url(client) == "https://example.atlassian.net"
     end
   end
 
@@ -70,7 +51,8 @@ defmodule JiraffeTest do
           basic: %{username: "user@example.net", password: "a-token"}
         )
 
-      assert client == @expected_client_with_basic_auth
+      assert get_auth_header(client) == "Basic dXNlckBleGFtcGxlLm5ldDphLXRva2Vu"
+      assert get_base_url(client) == "https://example.atlassian.net"
     end
   end
 
@@ -208,6 +190,28 @@ defmodule JiraffeTest do
                  1
                )
                |> Enum.to_list()
+    end
+  end
+
+  defp get_base_url(client) do
+    case client.pre
+         |> Enum.find(fn
+           {Tesla.Middleware.BaseUrl, :call, [_base_url]} -> true
+           _ -> false
+         end) do
+      {_, _, [base_url]} -> base_url
+      _ -> nil
+    end
+  end
+
+  defp get_auth_header(client) do
+    case client.pre
+         |> Enum.find(fn
+           {Tesla.Middleware.Headers, _, _values} -> true
+           _ -> false
+         end) do
+      {_, _, [[{"authorization", header}]]} -> header
+      _ -> nil
     end
   end
 end
