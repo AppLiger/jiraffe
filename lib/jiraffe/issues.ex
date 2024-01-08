@@ -94,4 +94,46 @@ defmodule Jiraffe.Issues do
         {:error, Error.new(reason)}
     end
   end
+
+  @doc """
+  Returns the edit screen fields for an issue that are visible to and editable by the user.
+  """
+  def get_edit_issue_metadata(client, issue_id_or_key, params \\ []) do
+    case Jiraffe.get(
+           client,
+           "/rest/api/2/issue/#{issue_id_or_key}/editmeta",
+           query: params
+         ) do
+      {:ok, %{status: 200, body: editmeta}} ->
+        {:ok, editmeta}
+
+      {:ok, response} ->
+        {:error, Error.new(:cannot_get_edit_issue_metadata, response)}
+
+      {:error, reason} ->
+        {:error, Error.new(reason)}
+    end
+  end
+
+  @doc """
+  **DEPRECATED**
+  Returns details of projects, issue types within projects,
+  and, when requested, the create screen fields for each issue type for the user.
+  """
+  def get_create_issue_metadata(client, params) do
+    case Jiraffe.get(
+           client,
+           "/rest/api/2/issue/createmeta",
+           query: params
+         ) do
+      {:ok, %{body: %{"projects" => projects}, status: 200}} ->
+        {:ok, %{projects: projects}}
+
+      {:ok, %{body: body}} ->
+        {:error, Error.new(:cannot_get_crete_meta, body)}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
 end
