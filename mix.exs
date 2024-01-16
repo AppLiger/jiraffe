@@ -7,11 +7,13 @@ defmodule Jiraffe.MixProject do
       app: :jiraffe,
       version: "0.0.1",
       elixir: "~> 1.14",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "Jiraffe",
       description: description(),
-      package: package()
+      package: package(),
+      test_coverage: [ignore_modules: [JiraffeTest.Support]]
     ]
   end
 
@@ -47,4 +49,7 @@ defmodule Jiraffe.MixProject do
       links: %{"GitHub" => "https://github.com/AppLiger/jiraffe"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

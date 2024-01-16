@@ -1,0 +1,58 @@
+{
+  "expand": "projects",
+  "projects": [
+    {
+      "expand": "issuetypes",
+      "self": "https://your-domain.atlassian.net/rest/api/3/project/10004",
+      "id": "10004",
+      "key": "ESD",
+      "name": "External service desk",
+      "avatarUrls": {
+        "48x48": "https://your-domain.atlassian.net/secure/projectavatar?pid=10004&avatarId=10404",
+        "24x24": "https://your-domain.atlassian.net/secure/projectavatar?size=small&s=small&pid=10004&avatarId=10404",
+        "16x16": "https://your-domain.atlassian.net/secure/projectavatar?size=xsmall&s=xsmall&pid=10004&avatarId=10404",
+        "32x32": "https://your-domain.atlassian.net/secure/projectavatar?size=medium&s=medium&pid=10004&avatarId=10404"
+      },
+      "issuetypes": [
+        {
+          "self": "https://your-domain.atlassian.net/rest/api/3/issuetype/10000",
+          "id": "10000",
+          "description": "A big user story that needs to be broken down. Created by Jira Software - do not edit or delete.",
+          "iconUrl": "https://your-domain.atlassian.net/images/icons/issuetypes/epic.svg",
+          "name": "Epic",
+          "untranslatedName": "Epic",
+          "subtask": false,
+          "expand": "fields",
+          "fields": {
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": [
+                "set"
+              ]
+            },
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": [
+                "set"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

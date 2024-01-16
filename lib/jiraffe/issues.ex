@@ -84,8 +84,8 @@ defmodule Jiraffe.Issues do
            "/rest/api/2/issue/#{id}",
            body
          ) do
-      {:ok, %{body: body, status: 204}} ->
-        {:ok, body}
+      {:ok, %{body: _body, status: 204}} ->
+        {:ok, %{id: id}}
 
       {:ok, response} ->
         {:error, Error.new(:cannot_update_issue, response)}
@@ -126,14 +126,14 @@ defmodule Jiraffe.Issues do
            "/rest/api/2/issue/createmeta",
            query: params
          ) do
-      {:ok, %{body: %{"projects" => projects}, status: 200}} ->
-        {:ok, %{projects: projects}}
+      {:ok, %{body: body, status: 200}} ->
+        {:ok, body}
 
       {:ok, %{body: body}} ->
         {:error, Error.new(:cannot_get_crete_meta, body)}
 
-      {:error, error} ->
-        {:error, error}
+      {:error, reason} ->
+        {:error, Error.new(reason)}
     end
   end
 end

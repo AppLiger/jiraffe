@@ -15,7 +15,9 @@ defmodule Jiraffe.Users do
   @type t() :: map()
 
   @doc """
+  **EXPERIMENTAL**
   Return a page of users matching the provided criteria.
+  [Rerefence](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-users/#api-rest-api-2-user-bulk-get)
   """
   @spec get_bulk(
           Client.t(),
@@ -34,8 +36,8 @@ defmodule Jiraffe.Users do
       {:ok, %{body: result}} ->
         {:error, %Error{reason: :cannot_get_users_list, details: result}}
 
-      {:error, error} ->
-        {:error, error}
+      {:error, reason} ->
+        {:error, Error.new(reason)}
     end
   end
 
@@ -61,7 +63,10 @@ defmodule Jiraffe.Users do
   def get_bulk_all(client, params) do
     users =
       get_bulk_stream(client, params)
-      |> Stream.flat_map(fn page -> page["values"] end)
+      |> Stream.flat_map(fn
+        %{"values" => values} -> values
+        _ -> []
+      end)
       |> Enum.to_list()
 
     {:ok, users}
