@@ -50,6 +50,26 @@ config :jiraffe, retry: [
 ]
 ```
 
+# Testing
+
+### Run tests
+
+```sh
+mix test
+```
+
+### Run all tests including slow onces
+
+```sh
+mix test --include slow
+```
+
+### Run tests with coverage
+
+```sh
+mix test --cover
+```
+
 # License
 
 This project is licensed under the MIT License

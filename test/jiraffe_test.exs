@@ -307,6 +307,37 @@ defmodule JiraffeTest do
     end
   end
 
+  @tag :slow
+  describe "default retryability behaviour" do
+    setup do
+      Application.put_env(:jiraffe, :retry, true)
+
+      {:ok, requests_count_pid} = Agent.start_link(fn -> 0 end)
+
+      fn ->
+        Application.put_env(:jiraffe, :retry, false)
+      end
+
+      mock(fn
+        %{method: :get, url: "https://example.atlassian.net/test"} ->
+          Agent.cast(requests_count_pid, Kernel, :+, [1])
+          json("Too many requests!!!", status: 429)
+      end)
+
+      client = Jiraffe.client("https://example.atlassian.net", "a-token")
+
+      get_requests_count = fn -> Agent.get(requests_count_pid, fn state -> state end) end
+
+      {:ok, client: client, get_requests_count: get_requests_count}
+    end
+
+    test "retries 3 times on 429", %{client: client, get_requests_count: get_requests_count} do
+      Jiraffe.get(client, "/test")
+
+      assert get_requests_count.() == 4
+    end
+  end
+
   defp get_base_url(client) do
     case client.pre
          |> Enum.find(fn

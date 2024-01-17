@@ -81,6 +81,7 @@ defmodule Jiraffe.Client do
           [
             {Tesla.Middleware.Retry,
              delay: 1_000,
+             max_retries: 3,
              should_retry: fn
                {:ok, %{status: status}}, _env, _context
                when status in [429] ->
