@@ -1,4 +1,4 @@
-defmodule Jiraffe.Issues do
+defmodule Jiraffe.Issue do
   @moduledoc """
   This resource represents Jira issues. Use it to:
 

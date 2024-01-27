@@ -1,4 +1,4 @@
-defmodule Jiraffe.Issues.SearchTest do
+defmodule Jiraffe.Issue.SearchTest do
   @moduledoc false
   use ExUnit.Case
   import Tesla.Mock
@@ -102,16 +102,19 @@ defmodule Jiraffe.Issues.SearchTest do
                   }
                 ]
               }} ==
-               Jiraffe.Issues.Search.search_jql(client, jql: "project = EX", maxResults: 1)
+               Jiraffe.Issue.Search.search_jql(client, jql: "project = EX", maxResults: 1)
     end
 
     test "returns error when gets unexpected status code", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :unexpected_status}} =
-               Jiraffe.Issues.Search.search_jql(client, jql: "non-acceptable-query", maxResults: 1)
+               Jiraffe.Issue.Search.search_jql(client,
+                 jql: "non-acceptable-query",
+                 maxResults: 1
+               )
     end
 
     test "returns error when gets error", %{client: client} do
-      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issues.Search.search_jql(client, raise: true)
+      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.Search.search_jql(client, raise: true)
     end
   end
 
@@ -138,7 +141,7 @@ defmodule Jiraffe.Issues.SearchTest do
                   }
                 }
               ]} ==
-               Jiraffe.Issues.Search.search_jql_all(client, jql: "project = EX", maxResults: 1)
+               Jiraffe.Issue.Search.search_jql_all(client, jql: "project = EX", maxResults: 1)
     end
   end
 
@@ -174,7 +177,7 @@ defmodule Jiraffe.Issues.SearchTest do
                  "total" => 2
                }
              ] ==
-               Jiraffe.Issues.Search.search_jql_stream(client, jql: "project = EX", maxResults: 1)
+               Jiraffe.Issue.Search.search_jql_stream(client, jql: "project = EX", maxResults: 1)
                |> Enum.to_list()
     end
   end

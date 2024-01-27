@@ -1,4 +1,4 @@
-defmodule Jiraffe.Issues.Search do
+defmodule Jiraffe.Issue.Search do
   @moduledoc """
   This resource represents various ways to search for issues.
   Use it to search for issues with a JQL query and find issues to populate an issue picker.
@@ -15,7 +15,7 @@ defmodule Jiraffe.Issues.Search do
   [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-get)
 
   ## Examples:
-      iex> Jiraffe.Issues.Search.search_jql(client, jql: "project = EX", maxResults: 1)
+      iex> Jiraffe.Issue.Search.search_jql(client, jql: "project = EX", maxResults: 1)
       {:ok, %{
         "startAt" => 0,
         "maxResults" => 1,
@@ -71,7 +71,7 @@ defmodule Jiraffe.Issues.Search do
   Returns a list of all issues found using the JQL query.
 
   ## Examples:
-      iex> Jiraffe.Issues.Search.search_jql_all(client, jql: "project = EX", maxResults: 1)
+      iex> Jiraffe.Issue.Search.search_jql_all(client, jql: "project = EX", maxResults: 1)
       {:ok, [
         %{
           "fields" => %{"description" => "Bar", "summary" => "Foo"},

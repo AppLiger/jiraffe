@@ -1,4 +1,4 @@
-defmodule Jiraffe.Agile.Sprints do
+defmodule Jiraffe.Agile.Sprint do
   @moduledoc """
   APIs related to sprints
   """

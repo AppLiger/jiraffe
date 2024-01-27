@@ -1,7 +1,7 @@
-defmodule Jiraffe.IssuesTest do
+defmodule Jiraffe.IssueTest do
   @moduledoc false
   use ExUnit.Case
-  doctest Jiraffe.Issues
+  doctest Jiraffe.Issue
 
   import Tesla.Mock
   import JiraffeTest.Support
@@ -47,7 +47,7 @@ defmodule Jiraffe.IssuesTest do
                 "key" => "ED-1",
                 "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
               }} ==
-               Jiraffe.Issues.get(client, "10002")
+               Jiraffe.Issue.get(client, "10002")
     end
 
     test "returns the issue with the given ID when given additional params", %{client: client} do
@@ -58,7 +58,7 @@ defmodule Jiraffe.IssuesTest do
                 "key" => "ED-1",
                 "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
               }} ==
-               Jiraffe.Issues.get(client, "10002",
+               Jiraffe.Issue.get(client, "10002",
                  expand: "names,schema",
                  properties: ["prop1", "prop2"]
                )
@@ -66,11 +66,11 @@ defmodule Jiraffe.IssuesTest do
 
     test "returns error when gets unexpected status code", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :unexpected_status}} =
-               Jiraffe.Issues.get(client, "WRONG-STATUS")
+               Jiraffe.Issue.get(client, "WRONG-STATUS")
     end
 
     test "returns error when gets error", %{client: client} do
-      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issues.get(client, "ERROR")
+      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.get(client, "ERROR")
     end
   end
 
@@ -120,7 +120,7 @@ defmodule Jiraffe.IssuesTest do
                   }
                 ]
               }} ==
-               Jiraffe.Issues.bulk_create(
+               Jiraffe.Issue.bulk_create(
                  client,
                  %{
                    issueUpdates: [
@@ -143,11 +143,11 @@ defmodule Jiraffe.IssuesTest do
 
     test "returns error when gets unexpected status code", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_create_issues}} =
-               Jiraffe.Issues.bulk_create(client, %{})
+               Jiraffe.Issue.bulk_create(client, %{})
     end
 
     test "returns error when gets error", %{client: client} do
-      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issues.bulk_create(client, %{raise: true})
+      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.bulk_create(client, %{raise: true})
     end
   end
 
@@ -179,7 +179,7 @@ defmodule Jiraffe.IssuesTest do
 
     test "updates an issue", %{client: client} do
       assert {:ok, %{id: "10002"}} ==
-               Jiraffe.Issues.update(
+               Jiraffe.Issue.update(
                  client,
                  "10002",
                  %{
@@ -193,7 +193,7 @@ defmodule Jiraffe.IssuesTest do
 
     test "returns error when gets unexpected status code", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_update_issue}} =
-               Jiraffe.Issues.update(
+               Jiraffe.Issue.update(
                  client,
                  "WRONG-STATUS",
                  %{
@@ -207,7 +207,7 @@ defmodule Jiraffe.IssuesTest do
 
     test "returns error when gets error", %{client: client} do
       assert {:error, %Jiraffe.Error{}} =
-               Jiraffe.Issues.update(
+               Jiraffe.Issue.update(
                  client,
                  "ERROR",
                  %{
@@ -292,16 +292,16 @@ defmodule Jiraffe.IssuesTest do
                   }
                 ]
               }} ==
-               Jiraffe.Issues.get_edit_issue_metadata(client, "10002")
+               Jiraffe.Issue.get_edit_issue_metadata(client, "10002")
     end
 
     test "returns error when gets unexpected status code", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_get_edit_issue_metadata}} =
-               Jiraffe.Issues.get_edit_issue_metadata(client, "WRONG-STATUS")
+               Jiraffe.Issue.get_edit_issue_metadata(client, "WRONG-STATUS")
     end
 
     test "returns error when gets error", %{client: client} do
-      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issues.get_edit_issue_metadata(client, "ERROR")
+      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.get_edit_issue_metadata(client, "ERROR")
     end
   end
 
@@ -394,7 +394,7 @@ defmodule Jiraffe.IssuesTest do
                   }
                 ]
               }} ==
-               Jiraffe.Issues.get_create_issue_metadata(client, [])
+               Jiraffe.Issue.get_create_issue_metadata(client, [])
     end
 
     test "returns details of projects, issue types within projects, and (requested) create screen fields for each issue type for the user when given additional params",
@@ -460,19 +460,19 @@ defmodule Jiraffe.IssuesTest do
                   }
                 ]
               }} ==
-               Jiraffe.Issues.get_create_issue_metadata(client,
+               Jiraffe.Issue.get_create_issue_metadata(client,
                  expand: "projects.issuetypes.fields"
                )
     end
 
     test "returns an error when gets unexpected status code (not 200)", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_get_crete_meta}} =
-               Jiraffe.Issues.get_create_issue_metadata(client, return: 404)
+               Jiraffe.Issue.get_create_issue_metadata(client, return: 404)
     end
 
     test "returns an error when gets error", %{client: client} do
       assert {:error, %Jiraffe.Error{}} =
-               Jiraffe.Issues.get_create_issue_metadata(client, raise: true)
+               Jiraffe.Issue.get_create_issue_metadata(client, raise: true)
     end
   end
 end

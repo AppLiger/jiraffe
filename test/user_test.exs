@@ -1,7 +1,7 @@
-defmodule Jiraffe.UsersTest do
+defmodule Jiraffe.UserTest do
   @moduledoc false
   use ExUnit.Case
-  doctest Jiraffe.Issues
+  doctest Jiraffe.Issue
 
   import Tesla.Mock
   import JiraffeTest.Support
@@ -106,7 +106,7 @@ defmodule Jiraffe.UsersTest do
                   }
                 ]
               }} ==
-               Jiraffe.Users.get_bulk(client,
+               Jiraffe.User.get_bulk(client,
                  accountId: ["5b10a2844c20165700ede21g", "6b10a2844c20165700ede21g"]
                )
     end
@@ -141,7 +141,7 @@ defmodule Jiraffe.UsersTest do
                   }
                 ]
               }} ==
-               Jiraffe.Users.get_bulk(client,
+               Jiraffe.User.get_bulk(client,
                  startAt: 1,
                  accountId: ["5b10a2844c20165700ede21g", "6b10a2844c20165700ede21g"]
                )
@@ -153,7 +153,7 @@ defmodule Jiraffe.UsersTest do
                 reason: :cannot_get_users_list,
                 details: %{}
               }} ==
-               Jiraffe.Users.get_bulk(client,
+               Jiraffe.User.get_bulk(client,
                  accountId: ["invalid"]
                )
     end
@@ -163,7 +163,7 @@ defmodule Jiraffe.UsersTest do
               %Jiraffe.Error{
                 details: %Tesla.Error{env: nil, stack: [], reason: :something_went_wrong},
                 reason: :general
-              }} == Jiraffe.Users.get_bulk(client, raise: true)
+              }} == Jiraffe.User.get_bulk(client, raise: true)
     end
   end
 
@@ -227,7 +227,7 @@ defmodule Jiraffe.UsersTest do
                  ]
                }
              ] ==
-               Jiraffe.Users.get_bulk_stream(client,
+               Jiraffe.User.get_bulk_stream(client,
                  maxResults: 1,
                  accountId: ["5b10a2844c20165700ede21g", "6b10a2844c20165700ede21g"]
                )
@@ -280,7 +280,7 @@ defmodule Jiraffe.UsersTest do
                   "timeZone" => "Australia/Sydney"
                 }
               ]} ==
-               Jiraffe.Users.get_bulk_all(client,
+               Jiraffe.User.get_bulk_all(client,
                  maxResults: 1,
                  accountId: ["5b10a2844c20165700ede21g", "6b10a2844c20165700ede21g"]
                )

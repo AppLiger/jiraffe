@@ -1,4 +1,4 @@
-defmodule Jiraffe.Issues.Links do
+defmodule Jiraffe.Issue.Link do
   @moduledoc """
   This resource represents links between issues.
   Use it to get, create, and delete links between issues.

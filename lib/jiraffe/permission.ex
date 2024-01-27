@@ -1,4 +1,4 @@
-defmodule Jiraffe.Permissions do
+defmodule Jiraffe.Permission do
   @moduledoc """
   This resource represents permissions.
   Use it to obtain details of all permissions and determine whether the user has certain permissions.

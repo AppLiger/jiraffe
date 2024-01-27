@@ -1,4 +1,4 @@
-defmodule Jiraffe.Users do
+defmodule Jiraffe.User do
   @moduledoc """
   This resource represent users. Use it to:
     - get, get a list of, create, and delete users.
@@ -42,7 +42,7 @@ defmodule Jiraffe.Users do
   end
 
   @doc """
-  Returns a stream of pages (see Jiraffe.Users.get_bulk/2 for more info).
+  Returns a stream of pages (see Jiraffe.User.get_bulk/2 for more info).
   """
   def get_bulk_stream(client, params) do
     per_page = Keyword.get(params, :maxResults, 50)
