@@ -41,22 +41,22 @@ defmodule Jiraffe.IssueTest do
 
     test "returns the issue with the given ID", %{client: client} do
       assert {:ok,
-              %{
-                "fields" => %{"description" => "Bar", "summary" => "Foo"},
-                "id" => "10002",
-                "key" => "ED-1",
-                "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+              %Jiraffe.Issue{
+                id: "10002",
+                key: "ED-1",
+                self: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
+                fields: %{"description" => "Bar", "summary" => "Foo"}
               }} ==
                Jiraffe.Issue.get(client, "10002")
     end
 
     test "returns the issue with the given ID when given additional params", %{client: client} do
       assert {:ok,
-              %{
-                "fields" => %{"description" => "Bar", "summary" => "Foo"},
-                "id" => "10002",
-                "key" => "ED-1",
-                "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+              %Jiraffe.Issue{
+                id: "10002",
+                key: "ED-1",
+                self: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
+                fields: %{"description" => "Bar", "summary" => "Foo"}
               }} ==
                Jiraffe.Issue.get(client, "10002",
                  expand: "names,schema",

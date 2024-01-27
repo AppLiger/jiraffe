@@ -18,7 +18,23 @@ defmodule Jiraffe.Issue do
   """
   alias Jiraffe.{Client, Error}
 
-  @type t() :: map()
+  defstruct expand: nil,
+            id: nil,
+            self: nil,
+            key: nil,
+            rendered_fields: %{},
+            properties: %{},
+            names: %{},
+            schema: %{},
+            transitions: [],
+            operations: [],
+            editmeta: %{},
+            changelog: nil,
+            versioned_representations: nil,
+            fields_to_include: nil,
+            fields: %{}
+
+  @type t() :: %__MODULE__{}
   @type error() :: {:error, Error.t()}
 
   @doc """
@@ -34,7 +50,24 @@ defmodule Jiraffe.Issue do
   def get(client, id_or_key, params \\ []) do
     case Jiraffe.get(client, "/rest/api/2/issue/" <> id_or_key, query: params) do
       {:ok, %{status: 200, body: body}} ->
-        {:ok, body}
+        {:ok,
+         %__MODULE__{
+           expand: body["expand"],
+           id: body["id"],
+           self: body["self"],
+           key: body["key"],
+           rendered_fields: Map.get(body, "renderedFields", %{}),
+           properties: Map.get(body, "properties", %{}),
+           names: Map.get(body, "names", %{}),
+           schema: Map.get(body, "schema", %{}),
+           transitions: Map.get(body, "transitions", []),
+           operations: Map.get(body, "operations", []),
+           editmeta: Map.get(body, "editmeta", %{}),
+           changelog: body["changelog"],
+           versioned_representations: body["versionedRepresentations"],
+           fields_to_include: body["fieldsToInclude"],
+           fields: Map.get(body, "fields", %{})
+         }}
 
       {:ok, result} ->
         {:error, Error.new(:unexpected_status, result)}
