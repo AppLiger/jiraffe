@@ -79,11 +79,11 @@ defmodule Jiraffe.UserTest do
     test "return first page of users matching the provided criteria", %{client: client} do
       assert {:ok,
               %{
-                "isLast" => false,
-                "maxResults" => 1,
-                "startAt" => 0,
-                "total" => 2,
-                "values" => [
+                is_last: false,
+                max_results: 1,
+                start_at: 0,
+                total: 2,
+                values: [
                   %{
                     "accountId" => "5b10a2844c20165700ede21g",
                     "accountType" => "atlassian",
@@ -114,11 +114,11 @@ defmodule Jiraffe.UserTest do
     test "returns second page of users matching the provided criteria", %{client: client} do
       assert {:ok,
               %{
-                "isLast" => true,
-                "maxResults" => 1,
-                "startAt" => 1,
-                "total" => 2,
-                "values" => [
+                is_last: true,
+                max_results: 1,
+                start_at: 1,
+                total: 2,
+                values: [
                   %{
                     "accountId" => "6b10a2844c20165700ede21g",
                     "accountType" => "atlassian",
@@ -171,11 +171,11 @@ defmodule Jiraffe.UserTest do
     test "returns stream of pages of users matching the provided criteria", %{client: client} do
       assert [
                %{
-                 "isLast" => false,
-                 "maxResults" => 1,
-                 "startAt" => 0,
-                 "total" => 2,
-                 "values" => [
+                 is_last: false,
+                 max_results: 1,
+                 start_at: 0,
+                 total: 2,
+                 values: [
                    %{
                      "accountId" => "5b10a2844c20165700ede21g",
                      "accountType" => "atlassian",
@@ -199,11 +199,11 @@ defmodule Jiraffe.UserTest do
                  ]
                },
                %{
-                 "isLast" => true,
-                 "maxResults" => 1,
-                 "startAt" => 1,
-                 "total" => 2,
-                 "values" => [
+                 is_last: true,
+                 max_results: 1,
+                 start_at: 1,
+                 total: 2,
+                 values: [
                    %{
                      "accountId" => "6b10a2844c20165700ede21g",
                      "accountType" => "atlassian",

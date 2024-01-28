@@ -82,43 +82,7 @@ defmodule Jiraffe.Issue.SearchTest do
     {:ok, client: client}
   end
 
-  describe "search_jql/3" do
-    test "returns issues found using the JQL query", %{client: client} do
-      assert {:ok,
-              %{
-                "startAt" => 0,
-                "maxResults" => 1,
-                "isLast" => false,
-                "total" => 2,
-                "issues" => [
-                  %{
-                    "id" => "10002",
-                    "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002",
-                    "key" => "EX-1",
-                    "fields" => %{
-                      "summary" => "Foo",
-                      "description" => "Bar"
-                    }
-                  }
-                ]
-              }} ==
-               Jiraffe.Issue.Search.search_jql(client, jql: "project = EX", maxResults: 1)
-    end
-
-    test "returns error when gets unexpected status code", %{client: client} do
-      assert {:error, %Jiraffe.Error{reason: :unexpected_status}} =
-               Jiraffe.Issue.Search.search_jql(client,
-                 jql: "non-acceptable-query",
-                 maxResults: 1
-               )
-    end
-
-    test "returns error when gets error", %{client: client} do
-      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.Search.search_jql(client, raise: true)
-    end
-  end
-
-  describe "search_jql_all/2" do
+  describe "search_jql/2" do
     test "returns stream of all issues found using the JQL query", %{client: client} do
       assert {:ok,
               [
@@ -141,7 +105,7 @@ defmodule Jiraffe.Issue.SearchTest do
                   }
                 }
               ]} ==
-               Jiraffe.Issue.Search.search_jql_all(client, jql: "project = EX", maxResults: 1)
+               Jiraffe.Issue.Search.search_jql(client, jql: "project = EX", maxResults: 1)
     end
   end
 
@@ -149,8 +113,8 @@ defmodule Jiraffe.Issue.SearchTest do
     test "returns stream of all issues found using the JQL query", %{client: client} do
       assert [
                %{
-                 "isLast" => false,
-                 "issues" => [
+                 is_last: false,
+                 values: [
                    %{
                      "fields" => %{"description" => "Bar", "summary" => "Foo"},
                      "id" => "10002",
@@ -158,13 +122,13 @@ defmodule Jiraffe.Issue.SearchTest do
                      "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10002"
                    }
                  ],
-                 "maxResults" => 1,
-                 "startAt" => 0,
-                 "total" => 2
+                 max_results: 1,
+                 start_at: 0,
+                 total: 2
                },
                %{
-                 "isLast" => true,
-                 "issues" => [
+                 is_last: true,
+                 values: [
                    %{
                      "fields" => %{"description" => "Qux", "summary" => "Baz"},
                      "id" => "10003",
@@ -172,9 +136,9 @@ defmodule Jiraffe.Issue.SearchTest do
                      "self" => "https://your-domain.atlassian.net/rest/api/2/issue/10003"
                    }
                  ],
-                 "maxResults" => 1,
-                 "startAt" => 1,
-                 "total" => 2
+                 max_results: 1,
+                 start_at: 1,
+                 total: 2
                }
              ] ==
                Jiraffe.Issue.Search.search_jql_stream(client, jql: "project = EX", maxResults: 1)

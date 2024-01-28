@@ -14,9 +14,12 @@ defmodule Jiraffe.User do
 
   @type t() :: map()
 
+  use Jiraffe.Pagination,
+    naming: [[page_fn: :get_bulk, stream: :get_bulk_stream, all: :get_bulk_all]]
+
   @doc """
-  **EXPERIMENTAL**
-  Return a page of users matching the provided criteria.
+  (**EXPERIMENTAL**) Returns a page of users matching the provided criteria.
+
   [Rerefence](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-users/#api-rest-api-2-user-bulk-get)
   """
   @spec get_bulk(
@@ -30,48 +33,21 @@ defmodule Jiraffe.User do
            "/rest/api/2/user/bulk",
            query: params
          ) do
-      {:ok, %{body: result, status: 200}} ->
-        {:ok, result}
+      {:ok, %{body: body, status: 200}} ->
+        {:ok,
+         %{
+           start_at: Map.get(body, "startAt", 0),
+           max_results: Map.get(body, "maxResults", 50),
+           is_last: Map.get(body, "isLast", true),
+           total: Map.get(body, "total", 0),
+           values: Map.get(body, "values", [])
+         }}
 
-      {:ok, %{body: result}} ->
-        {:error, %Error{reason: :cannot_get_users_list, details: result}}
+      {:ok, %{body: body}} ->
+        {:error, %Error{reason: :cannot_get_users_list, details: body}}
 
       {:error, reason} ->
         {:error, Error.new(reason)}
     end
-  end
-
-  @doc """
-  Returns a stream of pages (see Jiraffe.User.get_bulk/2 for more info).
-  """
-  def get_bulk_stream(client, params) do
-    per_page = Keyword.get(params, :maxResults, 50)
-
-    Jiraffe.stream_pages(
-      fn pagination_params ->
-        params = Keyword.merge(params, pagination_params, fn _key, _v1, v2 -> v2 end)
-
-        get_bulk(client, params)
-      end,
-      per_page
-    )
-  end
-
-  @doc """
-  Returns a paginated list of the users specified by one or more account IDs.
-  """
-  def get_bulk_all(client, params) do
-    users =
-      get_bulk_stream(client, params)
-      |> Stream.flat_map(fn
-        %{"values" => values} -> values
-        _ -> []
-      end)
-      |> Enum.to_list()
-
-    {:ok, users}
-  rescue
-    error ->
-      {:error, Error.new(:cannot_get_users_list, error)}
   end
 end

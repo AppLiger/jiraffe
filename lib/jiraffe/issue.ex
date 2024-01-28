@@ -149,8 +149,7 @@ defmodule Jiraffe.Issue do
   end
 
   @doc """
-  **DEPRECATED**
-  Returns details of projects, issue types within projects,
+  (**DEPRECATED**) Returns details of projects, issue types within projects,
   and, when requested, the create screen fields for each issue type for the user.
   """
   def get_create_issue_metadata(client, params) do
