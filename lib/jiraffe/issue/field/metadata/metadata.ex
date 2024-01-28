@@ -1,6 +1,6 @@
-defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType.Field do
+defmodule Jiraffe.Issue.Field.Metadata do
   @moduledoc """
-  Details of the fields available when creating an issue for the issue type.
+  Details of the fields available when creating/editing an issue for the issue type.
   """
   alias __MODULE__
 
@@ -13,7 +13,7 @@ defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType.Field do
             name: "",
             operations: [],
             required?: false,
-            schema: Field.Schema.new()
+            schema: Metadata.Schema.new()
 
   def new(body) do
     %__MODULE__{
@@ -26,7 +26,7 @@ defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType.Field do
       name: Map.get(body, "name", ""),
       operations: Map.get(body, "operations", []),
       required?: Map.get(body, "required", false),
-      schema: Field.Schema.new(body["schema"])
+      schema: Metadata.Schema.new(body["schema"])
     }
   end
 end

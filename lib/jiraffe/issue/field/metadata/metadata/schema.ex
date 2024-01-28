@@ -1,4 +1,4 @@
-defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType.Field.Schema do
+defmodule Jiraffe.Issue.Field.Metadata.Schema do
   @moduledoc """
   Details of the schema defining a field.
   """

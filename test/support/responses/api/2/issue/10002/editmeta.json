@@ -1,44 +1,30 @@
 {
-  "expand": "projects.issuetypes.fields",
-  "projects": [
-    {
-      "expand": "issuetypes.fields",
-      "issuetypes": [
-        {
-          "fields": {
-            "summary": {
-              "required": true,
-              "schema": {
-                "system": "summary",
-                "type": "string"
-              },
-              "name": "Summary",
-              "key": "summary",
-              "hasDefaultValue": false,
-              "operations": [
-                "set"
-              ]
-            },
-            "description": {
-              "required": false,
-              "schema": {
-                "system": "description",
-                "type": "string"
-              },
-              "name": "Description",
-              "key": "description",
-              "hasDefaultValue": false,
-              "operations": [
-                "set"
-              ]
-            }
-          },
-          "id": "10000",
-          "name": "Bug",
-          "self": "https://your-domain.atlassian.net/rest/api/2/issuetype/10000"
-        }
-      ],
-      "self": "https://your-domain.atlassian.net/rest/api/2/project/10000"
+  "fields": {
+    "summary": {
+      "required": true,
+      "schema": {
+        "system": "summary",
+        "type": "string"
+      },
+      "name": "Summary",
+      "key": "summary",
+      "hasDefaultValue": false,
+      "operations": [
+        "set"
+      ]
+    },
+    "description": {
+      "required": false,
+      "schema": {
+        "system": "description",
+        "type": "string"
+      },
+      "name": "Description",
+      "key": "description",
+      "hasDefaultValue": false,
+      "operations": [
+        "set"
+      ]
     }
-  ]
+  }
 }

@@ -3,7 +3,7 @@ defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType do
   Details of the issue creation metadata for an issue type.
   """
 
-  alias __MODULE__
+  alias Jiraffe.Issue.Field.Metadata
 
   defstruct [
     # The URL of these issue type details
@@ -35,7 +35,7 @@ defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType do
   def new(body) do
     fields =
       Map.get(body, "fields", %{})
-      |> Enum.map(fn {key, value} -> {key, IssueType.Field.new(value)} end)
+      |> Enum.map(fn {key, value} -> {key, Metadata.new(value)} end)
       |> Map.new()
 
     %__MODULE__{

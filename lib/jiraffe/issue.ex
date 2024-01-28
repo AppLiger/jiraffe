@@ -133,24 +133,4 @@ defmodule Jiraffe.Issue do
         {:error, Error.new(reason)}
     end
   end
-
-  @doc """
-  Returns the edit screen fields for an issue that are visible to and editable by the user.
-  """
-  def get_edit_issue_metadata(client, issue_id_or_key, params \\ []) do
-    case Jiraffe.get(
-           client,
-           "/rest/api/2/issue/#{issue_id_or_key}/editmeta",
-           query: params
-         ) do
-      {:ok, %{status: 200, body: editmeta}} ->
-        {:ok, editmeta}
-
-      {:ok, response} ->
-        {:error, Error.new(:cannot_get_edit_issue_metadata, response)}
-
-      {:error, reason} ->
-        {:error, Error.new(reason)}
-    end
-  end
 end

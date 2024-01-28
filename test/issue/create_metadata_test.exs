@@ -161,7 +161,7 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
              ] = issue_types
 
       assert %{
-               "description" => %Jiraffe.Issue.CreateMetadata.Project.IssueType.Field{
+               "description" => %Jiraffe.Issue.Field.Metadata{
                  allowed_values: [],
                  auto_complete_url: nil,
                  configuration: %{},
@@ -171,7 +171,7 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
                  name: "Description",
                  operations: ["set"],
                  required?: false,
-                 schema: %Jiraffe.Issue.CreateMetadata.Project.IssueType.Field.Schema{
+                 schema: %Jiraffe.Issue.Field.Metadata.Schema{
                    configuration: %{},
                    custom: "",
                    custom_id: 0,
@@ -180,7 +180,7 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
                    type: "string"
                  }
                },
-               "summary" => %Jiraffe.Issue.CreateMetadata.Project.IssueType.Field{
+               "summary" => %Jiraffe.Issue.Field.Metadata{
                  allowed_values: [],
                  auto_complete_url: nil,
                  configuration: %{},
@@ -190,7 +190,7 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
                  name: "Summary",
                  operations: ["set"],
                  required?: true,
-                 schema: %Jiraffe.Issue.CreateMetadata.Project.IssueType.Field.Schema{
+                 schema: %Jiraffe.Issue.Field.Metadata.Schema{
                    configuration: %{},
                    custom: "",
                    custom_id: 0,
