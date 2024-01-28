@@ -153,25 +153,4 @@ defmodule Jiraffe.Issue do
         {:error, Error.new(reason)}
     end
   end
-
-  @doc """
-  (**DEPRECATED**) Returns details of projects, issue types within projects,
-  and, when requested, the create screen fields for each issue type for the user.
-  """
-  def get_create_issue_metadata(client, params) do
-    case Jiraffe.get(
-           client,
-           "/rest/api/2/issue/createmeta",
-           query: params
-         ) do
-      {:ok, %{body: body, status: 200}} ->
-        {:ok, body}
-
-      {:ok, %{body: body}} ->
-        {:error, Error.new(:cannot_get_crete_meta, body)}
-
-      {:error, reason} ->
-        {:error, Error.new(reason)}
-    end
-  end
 end
