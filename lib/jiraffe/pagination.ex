@@ -1,5 +1,7 @@
 defmodule Jiraffe.Pagination do
   @moduledoc """
+  Defines functions to handle pagination.
+
   ## Reasoning
 
   The Jira REST API uses pagination to improve performance.

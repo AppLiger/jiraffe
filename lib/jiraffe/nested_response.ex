@@ -1,6 +1,6 @@
 defmodule Jiraffe.NestedResponse do
   @moduledoc """
-  Nested response.
+  Nested response (status and error collection struct).
   """
 
   defstruct status: nil,
