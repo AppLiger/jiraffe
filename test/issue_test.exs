@@ -45,7 +45,8 @@ defmodule Jiraffe.IssueTest do
                 id: "10002",
                 key: "ED-1",
                 self: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
-                fields: %{"description" => "Bar", "summary" => "Foo"}
+                fields: %{"description" => "Bar", "summary" => "Foo"},
+                edit_meta: %Jiraffe.Issue.EditMetadata{fields: %{}}
               }} ==
                Jiraffe.Issue.get(client, "10002")
     end
@@ -56,7 +57,8 @@ defmodule Jiraffe.IssueTest do
                 id: "10002",
                 key: "ED-1",
                 self: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
-                fields: %{"description" => "Bar", "summary" => "Foo"}
+                fields: %{"description" => "Bar", "summary" => "Foo"},
+                edit_meta: %Jiraffe.Issue.EditMetadata{fields: %{}}
               }} ==
                Jiraffe.Issue.get(client, "10002",
                  expand: "names,schema",
