@@ -5,49 +5,45 @@ defmodule Jiraffe.User do
     - get, set, and reset a user's default issue table columns.
     - get a list of the groups the user belongs to.
     - get a list of user account IDs for a list of usernames or user keys.
-
   """
-
-  alias Jiraffe.{Client, Error}
-
-  @type account_id() :: String.t()
 
   @type t() :: map()
 
-  use Jiraffe.Pagination,
-    naming: [[page_fn: :get_bulk, stream: :get_bulk_stream, all: :get_bulk_all]]
+  defstruct [
+    # The URL of the user
+    self: "",
+    # The account ID of the user
+    account_id: "",
+    # The email address of the user (nullable)
+    email_address: nil,
+    avatar_urls: %Jiraffe.Avatar.Url{},
+    # The display name of the user
+    display_name: "",
+    # Whether the user is active
+    active: false,
+    # The time zone specified in the user's profile (nullable)
+    time_zone: nil,
+    # The type of account represented by this user
+    account_type: ""
+  ]
 
   @doc """
-  (**EXPERIMENTAL**) Returns a page of users matching the provided criteria.
-
-  [Rerefence](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-users/#api-rest-api-2-user-bulk-get)
+  Converts a map (received from Jira API) to `Jira.User` struct.
   """
-  @spec get_bulk(
-          Client.t(),
-          params :: Keyword.t()
-        ) ::
-          {:ok, map()} | {:error, Error.t()}
-  def get_bulk(client, params) do
-    case Jiraffe.get(
-           client,
-           "/rest/api/2/user/bulk",
-           query: params
-         ) do
-      {:ok, %{body: body, status: 200}} ->
-        {:ok,
-         %{
-           start_at: Map.get(body, "startAt", 0),
-           max_results: Map.get(body, "maxResults", 50),
-           is_last: Map.get(body, "isLast", true),
-           total: Map.get(body, "total", 0),
-           values: Map.get(body, "values", [])
-         }}
+  def new(data) do
+    avatar_urls =
+      Map.get(data, "avatarUrls", %{})
+      |> Jiraffe.Avatar.Url.new()
 
-      {:ok, %{body: body}} ->
-        {:error, %Error{reason: :cannot_get_users_list, details: body}}
-
-      {:error, reason} ->
-        {:error, Error.new(reason)}
-    end
+    %__MODULE__{
+      account_id: Map.get(data, "accountId", ""),
+      account_type: Map.get(data, "accountType", ""),
+      active: Map.get(data, "active", false),
+      avatar_urls: avatar_urls,
+      display_name: Map.get(data, "displayName", ""),
+      email_address: Map.get(data, "emailAddress", nil),
+      self: Map.get(data, "self", ""),
+      time_zone: Map.get(data, "timeZone", nil)
+    }
   end
 end
