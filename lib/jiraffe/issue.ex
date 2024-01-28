@@ -28,7 +28,7 @@ defmodule Jiraffe.Issue do
             schema: %{},
             transitions: [],
             operations: [],
-            editmeta: %{},
+            edit_meta: %{},
             changelog: nil,
             versioned_representations: nil,
             fields_to_include: nil,
@@ -52,7 +52,7 @@ defmodule Jiraffe.Issue do
       schema: Map.get(body, "schema", %{}),
       transitions: Map.get(body, "transitions", []),
       operations: Map.get(body, "operations", []),
-      editmeta: Map.get(body, "editmeta", %{}),
+      edit_meta: Map.get(body, "editmeta", %{}),
       changelog: body["changelog"],
       versioned_representations: body["versionedRepresentations"],
       fields_to_include: body["fieldsToInclude"],
@@ -77,32 +77,6 @@ defmodule Jiraffe.Issue do
 
       {:ok, result} ->
         {:error, Error.new(:unexpected_status, result)}
-
-      {:error, reason} ->
-        {:error, Error.new(reason)}
-    end
-  end
-
-  @doc """
-  Creates upto 50 issues and, where the option to create subtasks is enabled in Jira, subtasks.
-
-  [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-bulk-post)
-  """
-  @spec bulk_create(
-          client :: Client.t(),
-          body :: map()
-        ) :: {:ok, map()} | error()
-  def bulk_create(client, body) do
-    case Jiraffe.post(
-           client,
-           "/rest/api/2/issue/bulk",
-           body
-         ) do
-      {:ok, %{status: 201, body: result}} ->
-        {:ok, result}
-
-      {:ok, response} ->
-        {:error, Error.new(:cannot_create_issues, response)}
 
       {:error, reason} ->
         {:error, Error.new(reason)}
