@@ -14,7 +14,7 @@ defmodule Jiraffe.Issue.BulkCreate do
   defstruct errors: [], issues: %{}
 
   @doc """
-  Converts a map (received from Jira API) to `Jira.Issue.BulkCreate` struct.
+  Converts a map (received from Jira API) to `Jiraffe.Issue.BulkCreate` struct.
   """
   @spec new(map()) :: %__MODULE__{}
   def new(body) do

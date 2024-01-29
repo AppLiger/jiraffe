@@ -28,7 +28,7 @@ defmodule Jiraffe.User do
   ]
 
   @doc """
-  Converts a map (received from Jira API) to `Jira.User` struct.
+  Converts a map (received from Jira API) to `Jiraffe.User` struct.
   """
   def new(data) do
     avatar_urls =

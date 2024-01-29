@@ -30,7 +30,7 @@ defmodule Jiraffe.Avatar.Url do
             large: ""
 
   @doc """
-  Converts a map (received from Jira API) to `Jira.Avatar.Url` struct.
+  Converts a map (received from Jira API) to `Jiraffe.Avatar.Url` struct.
   """
   def new(data) do
     %__MODULE__{

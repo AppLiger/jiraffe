@@ -16,7 +16,7 @@ defmodule Jiraffe.Issue.CreateMetadata do
   @type t() :: %__MODULE__{}
 
   @doc """
-  Converts a map (received from Jira API) to `Jira.Issue.CreateMetadata` struct.
+  Converts a map (received from Jira API) to `Jiraffe.Issue.CreateMetadata` struct.
   """
   def new(body) do
     %__MODULE__{

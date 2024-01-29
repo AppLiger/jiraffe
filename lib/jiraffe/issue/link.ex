@@ -21,7 +21,7 @@ defmodule Jiraffe.Issue.Link do
               outward: ""
 
     @doc """
-    Converts a map (received from Jira API) to `Jira.Issue.Link.Type` struct.
+    Converts a map (received from Jira API) to `Jiraffe.Issue.Link.Type` struct.
     """
     def new(body) do
       %__MODULE__{
@@ -41,7 +41,7 @@ defmodule Jiraffe.Issue.Link do
             type: nil
 
   @doc """
-  Converts a map (received from Jira API) to `Jira.Issue.Link` struct.
+  Converts a map (received from Jira API) to `Jiraffe.Issue.Link` struct.
   """
   def new(body) do
     inward_issue =

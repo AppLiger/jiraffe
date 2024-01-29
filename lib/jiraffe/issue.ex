@@ -26,7 +26,7 @@ defmodule Jiraffe.Issue do
   @type error() :: {:error, Error.t()}
 
   @doc """
-  Converts a map (received from Jira API) to `Jira.Issue` struct.
+  Converts a map (received from Jira API) to `Jiraffe.Issue` struct.
   """
   def new(body) do
     %__MODULE__{
