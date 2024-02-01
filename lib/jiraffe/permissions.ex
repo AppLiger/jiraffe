@@ -29,20 +29,42 @@ defmodule Jiraffe.Permissions do
   end
 
   alias Jiraffe.Permissions
-  alias Jiraffe.{Client, Error}
+  alias Jiraffe.{Error}
+
+  @type my_permissions_params() :: [
+          project_key: String.t(),
+          project_id: String.t(),
+          issue_key: String.t(),
+          issue_id: String.t(),
+          permissions: [String.t()],
+          project_uuid: String.t(),
+          project_configuration_uuid: String.t(),
+          comment_id: String.t()
+        ]
 
   @doc """
   Returns a list of permissions indicating which permissions the user has.
   Details of the user's permissions can be obtained in a global, project, issue or comment context.
+
+  ## Params
+
+  - `project_key` - The project key for the project.
+  - `project_id` - The project id for the project.
+  - `issue_key` - The issue key for the issue.
+  - `issue_id` - The issue id for the issue.
+  - `permissions` - (Required) A list of permission keys.
+  - `project_uuid` - The UUID of the project.
+  - `project_configuration_uuid` - The UUID of the project configuration.
+  - `comment_id` - The ID of the comment.
   """
 
   @spec my_permissions(
-          client :: Client.t(),
-          params :: Keyword.t()
+          client :: Jiraffe.client(),
+          params :: my_permissions_params()
         ) :: {:ok, map()} | {:error, Error.t()}
-  def my_permissions(client, params \\ []) do
+  def my_permissions(client, params) do
     params =
-      %{
+      [
         projectKey: Keyword.get(params, :project_key),
         projectId: Keyword.get(params, :project_id),
         issueKey: Keyword.get(params, :issue_key),
@@ -51,8 +73,8 @@ defmodule Jiraffe.Permissions do
         projectUuid: Keyword.get(params, :project_uuid),
         projectConfigurationUuid: Keyword.get(params, :project_configuration_uuid),
         commentId: Keyword.get(params, :comment_id)
-      }
-      |> Map.reject(fn {_, value} -> is_nil(value) end)
+      ]
+      |> Keyword.reject(fn {_, value} -> is_nil(value) end)
 
     case Jiraffe.get(
            client,

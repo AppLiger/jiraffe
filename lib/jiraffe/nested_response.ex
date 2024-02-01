@@ -3,6 +3,11 @@ defmodule Jiraffe.NestedResponse do
   Nested response (status and error collection struct).
   """
 
+  @type t() :: %__MODULE__{
+          status: integer() | nil,
+          error_collection: Jiraffe.ErrorCollection.t() | nil
+        }
+
   defstruct status: nil,
             error_collection: nil
 

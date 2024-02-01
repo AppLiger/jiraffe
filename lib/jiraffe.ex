@@ -13,10 +13,15 @@ defmodule Jiraffe do
           token: String.t()
         }
 
+  @type client() :: Tesla.Client.t()
+
   @doc """
   Reteruns a Tesla client with correct Base URL and Authorization headers
+
+    Jiraffe.Client.new("https://example.atlassian.net", aouth2: %{access_token: "a-token"})
+    %Tesla.Client{}
   """
-  @spec client(base_url :: String.t(), auth_params :: auth_params()) :: Tesla.Client.t()
+  @spec client(base_url :: String.t(), auth_params :: auth_params()) :: client()
   def client(base_url, auth_params) do
     Jiraffe.Client.new(base_url, auth_params)
   end

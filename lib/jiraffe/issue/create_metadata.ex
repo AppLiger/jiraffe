@@ -1,6 +1,6 @@
 defmodule Jiraffe.Issue.CreateMetadata do
   @moduledoc """
-  This resource returns the metadata required to create an issue. The fields
+  This struct represents the metadata required to create an issue. The fields
   returned depend on whether the user has permission to edit the issue and on
   whether the `update` parameter is set to `true` in the query string.
 
@@ -8,16 +8,20 @@ defmodule Jiraffe.Issue.CreateMetadata do
   """
 
   alias __MODULE__
-  alias Jiraffe.{Client, Error}
+  alias Jiraffe.Error
 
   defstruct expand: nil,
             projects: []
 
-  @type t() :: %__MODULE__{}
+  @type t() :: %__MODULE__{
+          expand: String.t() | nil,
+          projects: [CreateMetadata.Project.t()]
+        }
 
   @doc """
   Converts a map (received from Jira API) to `Jiraffe.Issue.CreateMetadata` struct.
   """
+  @spec new(map()) :: t()
   def new(body) do
     %__MODULE__{
       expand: body["expand"],
@@ -25,23 +29,20 @@ defmodule Jiraffe.Issue.CreateMetadata do
     }
   end
 
-  @doc """
-  (**DEPRECATED**) Returns details of projects, issue types within projects,
-  and, when requested, the create screen fields for each issue type for the user.
-
-  ## Examples
-
-      iex> Jiraffe.Issue.CreateMetadata.get()
-      {:ok,
-       %Jiraffe.Issue.CreateMetadata{
-         expand: "projects.issuetypes.fields",
-         fields: %{}
-        }
-      }
-  """
-  @spec get(client :: Client.t(), params :: Keyword.t()) ::
+  @doc false
+  @spec get(client :: Jiraffe.client(), params :: Jiraffe.Issue.get_create_metadata_params()) ::
           {:ok, t()} | {:error, Error.t()}
   def get(client, params) do
+    params =
+      [
+        projectIds: Keyword.get(params, :project_ids),
+        projectKeys: Keyword.get(params, :project_keys),
+        issuetypeIds: Keyword.get(params, :issue_type_ids),
+        issuetypeNames: Keyword.get(params, :issue_type_names),
+        expand: Keyword.get(params, :expand)
+      ]
+      |> Keyword.reject(fn {_, v} -> is_nil(v) end)
+
     case Jiraffe.get(
            client,
            "/rest/api/2/issue/createmeta",

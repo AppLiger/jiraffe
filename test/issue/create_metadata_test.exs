@@ -31,15 +31,22 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
         %{
           method: :get,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/createmeta",
-          query: [return: 404]
+          query: [expand: "404"]
         } ->
           json(
             %{},
             status: 404
           )
 
-        _ ->
+        %{
+          method: :get,
+          url: "https://your-domain.atlassian.net/rest/api/2/issue/createmeta",
+          query: [expand: "raise"]
+        } ->
           %Tesla.Error{reason: :something_went_wrong}
+
+        unmatched ->
+          raise "Unexpected request: #{inspect(unmatched)}"
       end)
 
       client = Jiraffe.client("https://your-domain.atlassian.net", "a-token")
@@ -53,7 +60,7 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
               %Jiraffe.Issue.CreateMetadata{
                 projects: projects
               }} =
-               Jiraffe.Issue.CreateMetadata.get(client, [])
+               Jiraffe.Issue.get_create_metadata(client, [])
 
       assert [
                %Jiraffe.Issue.CreateMetadata.Project{
@@ -117,7 +124,7 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
                 expand: "projects",
                 projects: projects
               }} =
-               Jiraffe.Issue.CreateMetadata.get(client,
+               Jiraffe.Issue.get_create_metadata(client,
                  expand: "projects.issuetypes.fields"
                )
 
@@ -204,12 +211,12 @@ defmodule Jiraffe.Issue.CreateMetadataTest do
 
     test "returns an error when gets unexpected status code (not 200)", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_get_crete_meta}} =
-               Jiraffe.Issue.CreateMetadata.get(client, return: 404)
+               Jiraffe.Issue.get_create_metadata(client, expand: "404")
     end
 
     test "returns an error when gets error", %{client: client} do
       assert {:error, %Jiraffe.Error{}} =
-               Jiraffe.Issue.CreateMetadata.get(client, raise: true)
+               Jiraffe.Issue.get_create_metadata(client, expand: "raise")
     end
   end
 end

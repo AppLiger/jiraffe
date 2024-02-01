@@ -7,7 +7,7 @@ defmodule Jiraffe.UserTest do
       assert %Jiraffe.User{
                account_id: "6b10a2844c20165700ede21g",
                account_type: "atlassian",
-               active: true,
+               active?: true,
                avatar_urls: %Jiraffe.Avatar.Url{
                  tiny: "https://avatar.net/initials/MK-6.png?size=16&s=16",
                  small: "https://avatar.net/initials/MK-6.png?size=24&s=24",

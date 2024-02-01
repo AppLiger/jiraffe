@@ -44,8 +44,8 @@ defmodule Jiraffe.Agile.Issue.RankTest do
           status: 400
         )
 
-      _ ->
-        %Tesla.Error{reason: :something_went_wrong}
+      unexpected ->
+        raise "Unexpected request: #{inspect(unexpected)}"
     end)
 
     client = Jiraffe.Client.new("https://your-domain.atlassian.net", "a-token")
@@ -56,7 +56,7 @@ defmodule Jiraffe.Agile.Issue.RankTest do
   describe "rank_after_issue/3" do
     test "makes a request with the correct parameters", %{client: client} do
       assert {:ok, _} =
-               Jiraffe.Agile.Issue.Rank.rank_after_issue(
+               Jiraffe.Agile.Issue.rank_after_issue(
                  client,
                  "A",
                  [
@@ -70,7 +70,7 @@ defmodule Jiraffe.Agile.Issue.RankTest do
   describe "rank_after_issue/4" do
     test "makes a request with the correct parameters", %{client: client} do
       assert {:ok, _} =
-               Jiraffe.Agile.Issue.Rank.rank_after_issue(
+               Jiraffe.Agile.Issue.rank_after_issue(
                  client,
                  "A",
                  [
@@ -83,7 +83,7 @@ defmodule Jiraffe.Agile.Issue.RankTest do
 
     test "returns error when Jira returns error", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_rank_issues}} =
-               Jiraffe.Agile.Issue.Rank.rank_after_issue(
+               Jiraffe.Agile.Issue.rank_after_issue(
                  client,
                  "will-fail",
                  [],
@@ -95,7 +95,7 @@ defmodule Jiraffe.Agile.Issue.RankTest do
   describe "rank_before_issue/3" do
     test "makes a request with the correct parameters", %{client: client} do
       assert {:ok, _} =
-               Jiraffe.Agile.Issue.Rank.rank_before_issue(
+               Jiraffe.Agile.Issue.rank_before_issue(
                  client,
                  "A",
                  [
@@ -109,7 +109,7 @@ defmodule Jiraffe.Agile.Issue.RankTest do
   describe "rank_before_issue/4" do
     test "makes a request with the correct parameters", %{client: client} do
       assert {:ok, _} =
-               Jiraffe.Agile.Issue.Rank.rank_before_issue(
+               Jiraffe.Agile.Issue.rank_before_issue(
                  client,
                  "A",
                  [
@@ -122,7 +122,7 @@ defmodule Jiraffe.Agile.Issue.RankTest do
 
     test "returns error when Jira returns error", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_rank_issues}} =
-               Jiraffe.Agile.Issue.Rank.rank_before_issue(
+               Jiraffe.Agile.Issue.rank_before_issue(
                  client,
                  "will-fail",
                  [],

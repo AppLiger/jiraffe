@@ -5,6 +5,16 @@ defmodule Jiraffe.Issue.CreateMetadata.Project do
 
   alias __MODULE__
 
+  @type t() :: %__MODULE__{
+          expand: String.t() | nil,
+          self: String.t() | nil,
+          id: String.t() | nil,
+          key: String.t() | nil,
+          name: String.t() | nil,
+          avatar_urls: Jiraffe.Avatar.Url.t() | nil,
+          issue_types: [Project.IssueType.t()]
+        }
+
   defstruct [
     # Expand options that include additional project issue create metadata details in the response
     expand: nil,
@@ -22,6 +32,7 @@ defmodule Jiraffe.Issue.CreateMetadata.Project do
     issue_types: []
   ]
 
+  @spec new(map()) :: t()
   def new(body) do
     issue_types =
       Map.get(body, "issuetypes", [])

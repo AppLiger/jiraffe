@@ -5,14 +5,28 @@ defmodule Jiraffe.Issue.Link do
   """
 
   alias __MODULE__
-  alias Jiraffe.{Client, Error}
+  alias Jiraffe.{Error, Issue}
 
-  @type t() :: map()
+  @type t() :: %__MODULE__{
+          id: String.t(),
+          self: String.t(),
+          inward_issue: Issue.t() | nil,
+          outward_issue: Issue.t() | nil,
+          type: Link.Type.t() | nil
+        }
 
   defmodule Type do
     @moduledoc """
     The type of link between the issues.
     """
+
+    @type t() :: %__MODULE__{
+            id: String.t(),
+            self: String.t(),
+            name: String.t(),
+            inward: String.t(),
+            outward: String.t()
+          }
 
     defstruct id: "",
               self: "",
@@ -23,6 +37,7 @@ defmodule Jiraffe.Issue.Link do
     @doc """
     Converts a map (received from Jira API) to `Jiraffe.Issue.Link.Type` struct.
     """
+    @spec new(map()) :: t()
     def new(body) do
       %__MODULE__{
         id: Map.get(body, "id", ""),
@@ -43,11 +58,12 @@ defmodule Jiraffe.Issue.Link do
   @doc """
   Converts a map (received from Jira API) to `Jiraffe.Issue.Link` struct.
   """
+  @spec new(map()) :: t()
   def new(body) do
     inward_issue =
       case Map.fetch(body, "inwardIssue") do
         {:ok, inward_issue} ->
-          Jiraffe.Issue.new(inward_issue)
+          Issue.new(inward_issue)
 
         :error ->
           nil
@@ -56,7 +72,7 @@ defmodule Jiraffe.Issue.Link do
     outward_issue =
       case Map.fetch(body, "outwardIssue") do
         {:ok, outward_issue} ->
-          Jiraffe.Issue.new(outward_issue)
+          Issue.new(outward_issue)
 
         :error ->
           nil
@@ -80,23 +96,34 @@ defmodule Jiraffe.Issue.Link do
     }
   end
 
-  @doc """
-  Creates a link between two issues.
-  Use this operation to indicate a relationship between two issues
-  and optionally add a comment to the from (outward) issue.
-  """
+  @doc false
   @spec create(
-          client :: Client.t(),
-          body :: map()
-        ) :: {:ok, String.t()} | {:error, Exception.t()}
-  def create(client, body) do
+          client :: Jiraffe.client(),
+          params :: Issue.link_params()
+        ) :: {:ok, t()} | {:error, Exception.t()}
+  def create(client, params) do
+    body =
+      %{
+        type: %{
+          id: Keyword.get(params, :type_id)
+        },
+        inwardIssue: %{
+          id: Keyword.get(params, :inward_issue_id)
+        },
+        outwardIssue: %{
+          id: Keyword.get(params, :outward_issue_id)
+        },
+        comment: Keyword.get(params, :comment)
+      }
+      |> Map.reject(fn {_, v} -> is_nil(v) end)
+
     case Jiraffe.post(
            client,
            "/rest/api/2/issueLink",
            body
          ) do
-      {:ok, %{status: 201, body: body}} ->
-        {:ok, new(body)}
+      {:ok, %{status: 201, body: _body}} ->
+        {:ok, %{}}
 
       {:ok, response} ->
         {:error, Error.new(:cannot_create_issue_link, response)}

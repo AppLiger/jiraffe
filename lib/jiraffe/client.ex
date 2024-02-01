@@ -1,19 +1,6 @@
 defmodule Jiraffe.Client do
-  @moduledoc """
-  HTTP client for Jira
-  """
+  @moduledoc false
 
-  @type t() :: Tesla.Client.t()
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Jiraffe.Client.new("https://example.atlassian.net", aouth2: %{access_token: "a-token"})
-      %Tesla.Client{}
-
-  """
   def new(base_url, oauth2: %{access_token: token}) do
     new_bearer(base_url, token)
   end

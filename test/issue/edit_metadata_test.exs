@@ -11,7 +11,7 @@ defmodule Jiraffe.Issue.EditMetadataTest do
         %{
           method: :get,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/10002/editmeta",
-          query: []
+          query: [overrideScreenSecurity: true]
         } ->
           json(
             jira_response_body("/api/2/issue/10002/editmeta"),
@@ -40,7 +40,7 @@ defmodule Jiraffe.Issue.EditMetadataTest do
               %Jiraffe.Issue.EditMetadata{
                 fields: fields
               }} =
-               Jiraffe.Issue.EditMetadata.get(client, "10002")
+               Jiraffe.Issue.get_edit_metadata(client, "10002", override_screen_security: true)
 
       assert %{
                "description" => %Jiraffe.Issue.Field.Metadata{
@@ -70,11 +70,11 @@ defmodule Jiraffe.Issue.EditMetadataTest do
 
     test "returns error when gets unexpected status code", %{client: client} do
       assert {:error, %Jiraffe.Error{reason: :cannot_get_edit_issue_metadata}} =
-               Jiraffe.Issue.EditMetadata.get(client, "WRONG-STATUS")
+               Jiraffe.Issue.get_edit_metadata(client, "WRONG-STATUS")
     end
 
     test "returns error when gets error", %{client: client} do
-      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.EditMetadata.get(client, "ERROR")
+      assert {:error, %Jiraffe.Error{}} = Jiraffe.Issue.get_edit_metadata(client, "ERROR")
     end
   end
 end

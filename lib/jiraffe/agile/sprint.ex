@@ -3,9 +3,20 @@ defmodule Jiraffe.Agile.Sprint do
   APIs related to sprints
   """
 
-  @type t() :: map()
+  @type t() :: %__MODULE__{
+          id: non_neg_integer(),
+          self: String.t() | nil,
+          state: String.t(),
+          name: String.t(),
+          start_date: String.t() | nil,
+          end_date: String.t() | nil,
+          complete_date: String.t() | nil,
+          created_date: String.t() | nil,
+          origin_board_id: non_neg_integer() | nil,
+          goal: String.t()
+        }
 
-  alias Jiraffe.{Client, Error}
+  alias Jiraffe.{Error}
 
   defstruct [
     # The ID of the sprint
@@ -33,6 +44,7 @@ defmodule Jiraffe.Agile.Sprint do
   @doc """
   Converts a map (received from Jira API) to `Jiraffe.Agile.Sprint` struct.
   """
+  @spec new(map()) :: t()
   def new(body) do
     %__MODULE__{
       id: Map.get(body, "id", 0),
@@ -54,8 +66,8 @@ defmodule Jiraffe.Agile.Sprint do
   or view at least one of the issues in the sprint.
   """
   @spec get(
-          client :: Client.t(),
-          id :: binary()
+          client :: Jiraffe.client(),
+          id :: String.t()
         ) :: {:ok, t()} | {:error, Error.t()}
   def get(client, sprint_id) do
     case Jiraffe.get(

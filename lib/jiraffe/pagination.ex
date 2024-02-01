@@ -1,3 +1,22 @@
+defmodule Jiraffe.ResultsPage do
+  @moduledoc """
+  Represents a page of results.
+  """
+  @type t() :: %__MODULE__{
+          start_at: non_neg_integer(),
+          max_results: non_neg_integer(),
+          total: non_neg_integer(),
+          is_last: boolean(),
+          values: [term()]
+        }
+
+  defstruct start_at: 0,
+            max_results: 50,
+            total: 0,
+            is_last: true,
+            values: []
+end
+
 defmodule Jiraffe.Pagination do
   @moduledoc """
   Defines functions to handle pagination.
@@ -24,20 +43,20 @@ defmodule Jiraffe.Pagination do
   }
   ```
 
-    `startAt` is the index of the first item returned in the page.
+  - `startAt` is the index of the first item returned in the page.
+  - `maxResults` is the maximum number of items that a page can return. Each operation can have a different limit for the number of items returned, and these limits may change without notice. To find the maximum number of items that an operation could return, set maxResults to a large number—for example, over 1000—and if the returned value of maxResults is less than the requested value, the returned value is the maximum.
+  - `total` is the total number of items contained in all pages. This number may change as the client requests the subsequent pages, therefore the client should always assume that the requested page can be empty. Note that this property is not returned for all operations.
+  - `isLast` indicates whether the page returned is the last one. Note that this property is not returned for all operations.
 
-    `maxResults` is the maximum number of items that a page can return. Each operation can have a different limit for the number of items returned, and these limits may change without notice. To find the maximum number of items that an operation could return, set maxResults to a large number—for example, over 1000—and if the returned value of maxResults is less than the requested value, the returned value is the maximum.
-
-    `total` is the total number of items contained in all pages. This number may change as the client requests the subsequent pages, therefore the client should always assume that the requested page can be empty. Note that this property is not returned for all operations.
-
-    `isLast` indicates whether the page returned is the last one. Note that this property is not returned for all operations.
-
-    See [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#pagination)
+  See [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#pagination)
 
   ## Usage
+
+  Warning! It's ment for internal use only.
+
     - Use `use Jiraffe.Pagination` in your module.
     - Define a function that returns a page of results.
-    The function should accept a `Jiraffe.Client.t()` and a `Keyword.t()` as arguments and return a `{:ok, page_result()}` or `{:error, Jiraffe.Error.t()}`.
+    The function should accept a `Jiraffe.client()` and a `Keyword.t()` as arguments and return a `{:ok, Jiraffe.Pagination.Page.t()}` or `{:error, Jiraffe.Error.t()}`.
     - In your module, you'll get a function (`all/2`) that returns a list of all results and a function (`stream/2`) that returns a stream of pages.
     - You can customize the names of these functions by passing a list of options to `use Jiraffe.Pagination`:
       - `naming: [[page_fn: :get_page, stream: :stream_name, all: :all_name]]`
@@ -73,14 +92,6 @@ defmodule Jiraffe.Pagination do
     ```
   """
 
-  @type page_result() :: %{
-          start_at: non_neg_integer(),
-          max_results: non_neg_integer(),
-          total: non_neg_integer(),
-          is_last: boolean(),
-          values: [term()]
-        }
-
   defmacro __using__(opts) do
     naming = Keyword.get(opts, :naming, [[]])
 
@@ -109,16 +120,21 @@ defmodule Jiraffe.Pagination do
                 {:halt, page_number}
 
               page_number ->
-                per_page = Keyword.get(params, :maxResults, 50)
-                pagination_params = [startAt: page_number * per_page, maxResults: per_page]
+                per_page = Keyword.get(params, :max_results, 50)
+                pagination_params = [start_at: page_number * per_page, max_results: per_page]
 
                 params =
                   Keyword.merge(params, pagination_params, fn _key, _v1, v2 -> v2 end)
 
                 case apply(__MODULE__, unquote(get_page_fn), [client, params]) do
-                  {:ok, %{is_last: true} = page} -> {[page], -1}
-                  {:ok, %{is_last: false} = page} -> {[page], page_number + 1}
-                  _ -> {:halt, page_number}
+                  {:ok, %{is_last: true} = page} ->
+                    {[page], -1}
+
+                  {:ok, %{is_last: false} = page} ->
+                    {[page], page_number + 1}
+
+                  {:error, reason} ->
+                    {:halt, page_number}
                 end
             end,
             & &1

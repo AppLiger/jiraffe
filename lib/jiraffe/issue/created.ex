@@ -3,13 +3,19 @@ defmodule Jiraffe.Issue.Created do
   Details about a created issue or subtask.
   """
 
+  @type t() :: %__MODULE__{
+          id: String.t(),
+          key: String.t(),
+          self: String.t(),
+          transition: Jiraffe.NestedResponse.t() | nil
+        }
+
   defstruct id: "",
             key: "",
             self: "",
-            # NestedResponse struct
             transition: nil
 
-  @spec new(map()) :: %__MODULE__{}
+  @spec new(map()) :: t()
   def new(body) do
     transition = Map.get(body, "transition")
 
