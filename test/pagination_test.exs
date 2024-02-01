@@ -31,7 +31,7 @@ defmodule Jiraffe.PaginationTest do
       mock(fn
         %{
           url: "https://example.atlassian.net/test",
-          query: [startAt: 0, maxResults: 1]
+          query: [start_at: 0, max_results: 1]
         } ->
           json(
             %{
@@ -46,7 +46,7 @@ defmodule Jiraffe.PaginationTest do
 
         %{
           url: "https://example.atlassian.net/test",
-          query: [startAt: 1, maxResults: 1]
+          query: [start_at: 1, max_results: 1]
         } ->
           json(
             %{
@@ -61,7 +61,7 @@ defmodule Jiraffe.PaginationTest do
 
         %{
           url: "https://example.atlassian.net/test",
-          query: [startAt: 0, maxResults: 1, noInfo: true]
+          query: [start_at: 0, max_results: 1, no_info: true]
         } ->
           json(
             %{
@@ -94,7 +94,7 @@ defmodule Jiraffe.PaginationTest do
                  values: ["Page 2: A", "Page 2: B"]
                }
              ] ==
-               stream(client, maxResults: 1)
+               stream(client, max_results: 1)
                |> Enum.to_list()
     end
 
@@ -108,7 +108,7 @@ defmodule Jiraffe.PaginationTest do
                  values: []
                }
              ] ==
-               stream(client, noInfo: true)
+               stream(client, no_info: true)
                |> Enum.to_list()
     end
   end

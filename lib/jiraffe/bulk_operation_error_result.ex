@@ -3,6 +3,12 @@ defmodule Jiraffe.BulkOperationErrorResult do
   Details about a failed bulk operation.
   """
 
+  @type t() :: %__MODULE__{
+          element_errors: Jiraffe.ErrorCollection.t() | nil,
+          failed_element_number: integer() | nil,
+          status: integer() | nil
+        }
+
   defstruct [
     # ErrorCollection struct
     element_errors: nil,

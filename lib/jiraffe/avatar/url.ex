@@ -24,6 +24,13 @@ defmodule Jiraffe.Avatar.Url do
   ```
   """
 
+  @type t() :: %__MODULE__{
+          tiny: String.t(),
+          small: String.t(),
+          medium: String.t(),
+          large: String.t()
+        }
+
   defstruct tiny: "",
             small: "",
             medium: "",
@@ -32,6 +39,7 @@ defmodule Jiraffe.Avatar.Url do
   @doc """
   Converts a map (received from Jira API) to `Jiraffe.Avatar.Url` struct.
   """
+  @spec new(map()) :: t()
   def new(data) do
     %__MODULE__{
       tiny: Map.get(data, "16x16", ""),

@@ -1,50 +1,40 @@
 defmodule Jiraffe.Agile.Issue.Rank do
-  @moduledoc """
-  Agile Issue ranking
-  """
+  @moduledoc false
 
-  alias Jiraffe.{Client, Error}
+  alias Jiraffe.{Error, Agile}
 
   require Logger
 
-  @doc """
-  Moves (ranks) issues after a given issue. At most 50 issues may be ranked at once.
-  If `rank_custom_field_id` is not defined, the default rank field will be used.
-  """
   @spec rank_after_issue(
-          client :: Client.t(),
+          client :: Jiraffe.client(),
           issue_id :: String.t(),
           issues :: list(String.t()),
-          opts :: Keyword.t()
+          params :: Agile.Issue.rank_params()
         ) :: {:ok, String.t()} | {:error, Error.t()}
-  def rank_after_issue(client, issue_id, issues, opts \\ []) do
+  def rank_after_issue(client, issue_id, issues, params \\ []) do
     params =
       %{
         rankAfterIssue: issue_id,
         issues: issues,
-        rankCustomFieldId: Keyword.get(opts, :rank_custom_field_id)
+        rankCustomFieldId: Keyword.get(params, :rank_custom_field_id)
       }
       |> Map.reject(fn {_, v} -> is_nil(v) end)
 
     rank(client, params)
   end
 
-  @doc """
-  Moves (ranks) issues before a given issue. At most 50 issues may be ranked at once.
-  If `rank_custom_field_id` is not defined, the default rank field will be used.
-  """
   @spec rank_before_issue(
-          client :: Client.t(),
+          client :: Jiraffe.client(),
           issue_id :: String.t(),
           issues :: list(String.t()),
-          opts :: Keyword.t()
+          params :: Agile.Issue.rank_params()
         ) :: {:ok, String.t()} | {:error, Error.t()}
-  def rank_before_issue(client, issue_id, issues, opts \\ []) do
+  def rank_before_issue(client, issue_id, issues, params \\ []) do
     params =
       %{
         rankBeforeIssue: issue_id,
         issues: issues,
-        rankCustomFieldId: Keyword.get(opts, :rank_custom_field_id)
+        rankCustomFieldId: Keyword.get(params, :rank_custom_field_id)
       }
       |> Map.reject(fn {_, v} -> is_nil(v) end)
 
@@ -52,7 +42,7 @@ defmodule Jiraffe.Agile.Issue.Rank do
   end
 
   @spec rank(
-          client :: Client.t(),
+          client :: Jiraffe.client(),
           body ::
             %{
               rankAfterIssue: String.t() | nil,

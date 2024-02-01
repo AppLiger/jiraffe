@@ -11,15 +11,26 @@ defmodule Jiraffe.PermissionsTest do
         %{
           method: :get,
           url: "https://your-domain.atlassian.net/rest/api/2/mypermissions",
-          query: %{permissions: "EDIT_ISSUES", projectId: "42"}
+          query: [projectId: "42", permissions: "EDIT_ISSUES"]
         } ->
           json(jira_response_body("/api/2/mypermissions"), status: 200)
 
         %{
           method: :get,
-          url: "https://your-domain.atlassian.net/rest/api/2/mypermissions"
+          url: "https://your-domain.atlassian.net/rest/api/2/mypermissions",
+          query: [projectId: "fail"]
         } ->
           %Tesla.Env{status: 400}
+
+        %{
+          method: :get,
+          url: "https://your-domain.atlassian.net/rest/api/2/mypermissions",
+          query: [projectId: "raise"]
+        } ->
+          %Tesla.Error{reason: 500}
+
+        unexpected ->
+          raise "Unexpected request: #{inspect(unexpected)}"
       end)
 
       client = Jiraffe.client("https://your-domain.atlassian.net", "a-token")
@@ -51,7 +62,16 @@ defmodule Jiraffe.PermissionsTest do
                 reason: :cannot_get_my_permissions,
                 details: %Tesla.Env{status: 400}
               }} ==
-               Jiraffe.Permissions.my_permissions(client)
+               Jiraffe.Permissions.my_permissions(client, project_id: "fail")
+    end
+
+    test "returns an error when gets error", %{client: client} do
+      assert {:error,
+              %Jiraffe.Error{
+                reason: :cannot_get_my_permissions,
+                details: %Tesla.Error{reason: 500}
+              }} ==
+               Jiraffe.Permissions.my_permissions(client, project_id: "raise")
     end
   end
 end

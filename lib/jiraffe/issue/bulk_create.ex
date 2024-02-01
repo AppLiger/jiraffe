@@ -1,41 +1,44 @@
-defmodule Jiraffe.Issue.BulkCreate do
+defmodule Jiraffe.Issue.BulkCreateResult do
   @moduledoc """
-  Bulk create Jira issues.
+  Bulk create Jira issues result struct.
   """
-
-  @doc """
-  Creates upto 50 issues and, where the option to create subtasks is enabled in Jira, subtasks.
-
-  [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-bulk-post)
-  """
-
-  alias Jiraffe.{Client, Error}
-
   defstruct errors: [], issues: %{}
 
+  @type t() :: %__MODULE__{
+          errors: [Jiraffe.BulkOperationErrorResult.t()],
+          issues: [Jiraffe.Issue.Created.t()]
+        }
+
   @doc """
-  Converts a map (received from Jira API) to `Jiraffe.Issue.BulkCreate` struct.
+  Converts a map (received from Jira API) to `Jiraffe.Issue.BulkCreateResult` struct.
   """
-  @spec new(map()) :: %__MODULE__{}
+  @spec new(map()) :: t()
   def new(body) do
     %__MODULE__{
       errors: Map.get(body, "errors", []) |> Enum.map(&Jiraffe.BulkOperationErrorResult.new/1),
       issues: Map.get(body, "issues", []) |> Enum.map(&Jiraffe.Issue.Created.new/1)
     }
   end
+end
+
+defmodule Jiraffe.Issue.BulkCreate do
+  @moduledoc false
+  alias Jiraffe.Error
 
   @spec create(
-          client :: Client.t(),
-          body :: map()
-        ) :: {:ok, map()} | {:error, Error.t()}
+          client :: Jiraffe.client(),
+          updates :: [Jiraffe.Issue.UpdateDetails.t()]
+        ) :: {:ok, Jiraffe.Issue.BulkCreateResult.t()} | {:error, Error.t()}
   def create(client, body) do
     case Jiraffe.post(
            client,
            "/rest/api/2/issue/bulk",
-           body
+           %{
+             issueUpdates: body |> Enum.map(&Jiraffe.Issue.UpdateDetails.new/1)
+           }
          ) do
       {:ok, %{status: 201, body: body}} ->
-        {:ok, new(body)}
+        {:ok, Jiraffe.Issue.BulkCreateResult.new(body)}
 
       {:ok, response} ->
         {:error, Error.new(:cannot_create_issues, response)}

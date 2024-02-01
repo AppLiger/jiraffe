@@ -5,6 +5,21 @@ defmodule Jiraffe.Issue.CreateMetadata.Project.IssueType do
 
   alias Jiraffe.Issue.Field.Metadata
 
+  @type t() :: %__MODULE__{
+          self: String.t() | nil,
+          id: String.t() | nil,
+          description: String.t() | nil,
+          icon_url: String.t() | nil,
+          name: String.t() | nil,
+          subtask?: boolean() | nil,
+          avatar_id: integer() | nil,
+          entity_id: String.t() | nil,
+          hierarchy_level: integer() | nil,
+          scope: map() | nil,
+          expand: String.t() | nil,
+          fields: map()
+        }
+
   defstruct [
     # The URL of these issue type details
     self: nil,
