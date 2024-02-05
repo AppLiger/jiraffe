@@ -45,7 +45,10 @@ defmodule Jiraffe.Issue.JqlSearchTest do
           maxResults: 1,
           total: 2,
           isLast: false,
-          issues: [Enum.at(@issues, 0)]
+          issues: [Enum.at(@issues, 0)],
+          names: %{
+            "summary" => "Summary"
+          }
         })
 
       %{
@@ -58,7 +61,10 @@ defmodule Jiraffe.Issue.JqlSearchTest do
           maxResults: 1,
           isLast: false,
           total: 2,
-          issues: [Enum.at(@issues, 0)]
+          issues: [Enum.at(@issues, 0)],
+          names: %{
+            "summary" => "Summary"
+          }
         })
 
       %{
@@ -71,7 +77,10 @@ defmodule Jiraffe.Issue.JqlSearchTest do
           maxResults: 1,
           isLast: true,
           total: 2,
-          issues: [Enum.at(@issues, 1)]
+          issues: [Enum.at(@issues, 1)],
+          names: %{
+            "description" => "Description"
+          }
         })
 
       %{
@@ -98,17 +107,21 @@ defmodule Jiraffe.Issue.JqlSearchTest do
                 max_results: 1,
                 is_last: false,
                 total: 2,
-                values: [
-                  %Jiraffe.Issue{
-                    id: "10002",
-                    self: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
-                    key: "EX-1",
-                    fields: %{
-                      "summary" => "Foo",
-                      "description" => "Bar"
+                values: %{
+                  issues: [
+                    %Jiraffe.Issue{
+                      id: "10002",
+                      self: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
+                      key: "EX-1",
+                      fields: %{
+                        "summary" => "Foo",
+                        "description" => "Bar"
+                      }
                     }
-                  }
-                ]
+                  ],
+                  names: %{"summary" => "Summary"},
+                  schema: %{}
+                }
               }} ==
                Jiraffe.Issue.jql_search(client, jql: "project = EX", max_results: 1)
     end
@@ -128,22 +141,29 @@ defmodule Jiraffe.Issue.JqlSearchTest do
   describe "search_jql_all/2" do
     test "returns all issues found using the JQL query", %{client: client} do
       assert {:ok,
-              [
-                %Jiraffe.Issue{
-                  edit_meta: %Jiraffe.Issue.EditMetadata{fields: %{}},
-                  fields: %{"description" => "Bar", "summary" => "Foo"},
-                  id: "10002",
-                  key: "EX-1",
-                  self: "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+              %{
+                names: %{
+                  "description" => "Description",
+                  "summary" => "Summary"
                 },
-                %Jiraffe.Issue{
-                  edit_meta: %Jiraffe.Issue.EditMetadata{fields: %{}},
-                  fields: %{"description" => "Qux", "summary" => "Baz"},
-                  id: "10003",
-                  key: "EX-2",
-                  self: "https://your-domain.atlassian.net/rest/api/2/issue/10003"
-                }
-              ]} ==
+                issues: [
+                  %Jiraffe.Issue{
+                    edit_meta: %Jiraffe.Issue.EditMetadata{fields: %{}},
+                    fields: %{"description" => "Bar", "summary" => "Foo"},
+                    id: "10002",
+                    key: "EX-1",
+                    self: "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+                  },
+                  %Jiraffe.Issue{
+                    edit_meta: %Jiraffe.Issue.EditMetadata{fields: %{}},
+                    fields: %{"description" => "Qux", "summary" => "Baz"},
+                    id: "10003",
+                    key: "EX-2",
+                    self: "https://your-domain.atlassian.net/rest/api/2/issue/10003"
+                  }
+                ],
+                schema: %{}
+              }} ==
                Jiraffe.Issue.jql_search_all(client, jql: "project = EX", max_results: 1)
     end
   end
@@ -153,28 +173,40 @@ defmodule Jiraffe.Issue.JqlSearchTest do
       assert [
                %ResultsPage{
                  is_last: false,
-                 values: [
-                   %Jiraffe.Issue{
-                     fields: %{"description" => "Bar", "summary" => "Foo"},
-                     id: "10002",
-                     key: "EX-1",
-                     self: "https://your-domain.atlassian.net/rest/api/2/issue/10002"
-                   }
-                 ],
+                 values: %{
+                   names: %{
+                     "summary" => "Summary"
+                   },
+                   schema: %{},
+                   issues: [
+                     %Jiraffe.Issue{
+                       fields: %{"description" => "Bar", "summary" => "Foo"},
+                       id: "10002",
+                       key: "EX-1",
+                       self: "https://your-domain.atlassian.net/rest/api/2/issue/10002"
+                     }
+                   ]
+                 },
                  max_results: 1,
                  start_at: 0,
                  total: 2
                },
                %ResultsPage{
                  is_last: true,
-                 values: [
-                   %Jiraffe.Issue{
-                     fields: %{"description" => "Qux", "summary" => "Baz"},
-                     id: "10003",
-                     key: "EX-2",
-                     self: "https://your-domain.atlassian.net/rest/api/2/issue/10003"
-                   }
-                 ],
+                 values: %{
+                   names: %{
+                     "description" => "Description"
+                   },
+                   schema: %{},
+                   issues: [
+                     %Jiraffe.Issue{
+                       fields: %{"description" => "Qux", "summary" => "Baz"},
+                       id: "10003",
+                       key: "EX-2",
+                       self: "https://your-domain.atlassian.net/rest/api/2/issue/10003"
+                     }
+                   ]
+                 },
                  max_results: 1,
                  start_at: 1,
                  total: 2

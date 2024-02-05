@@ -4,6 +4,7 @@ defmodule Jiraffe.Issue.JqlSearch do
   alias Jiraffe.{Issue, Error}
   use Jiraffe.Pagination
 
+  @impl Jiraffe.Pagination
   @spec page(
           Jiraffe.client(),
           params :: Issue.jql_search_params()
@@ -31,7 +32,11 @@ defmodule Jiraffe.Issue.JqlSearch do
            max_results: Map.get(body, "maxResults", 50),
            is_last: Map.get(body, "isLast", true),
            total: Map.get(body, "total", 0),
-           values: Map.get(body, "issues", []) |> Enum.map(&Issue.new/1)
+           values: %{
+             issues: Map.get(body, "issues", []) |> Enum.map(&Issue.new/1),
+             names: Map.get(body, "names", %{}),
+             schema: Map.get(body, "schema", %{})
+           }
          }}
 
       {:ok, result} ->
@@ -40,5 +45,17 @@ defmodule Jiraffe.Issue.JqlSearch do
       {:error, reason} ->
         {:error, Error.new(reason)}
     end
+  end
+
+  @impl Jiraffe.Pagination
+  def transform_values(list) do
+    list
+    |> Enum.reduce(%{issues: [], names: %{}, schema: %{}}, fn v, acc ->
+      %{
+        issues: acc.issues ++ v.issues,
+        names: Map.merge(acc.names, v.names),
+        schema: Map.merge(acc.schema, v.schema)
+      }
+    end)
   end
 end

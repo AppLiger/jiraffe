@@ -7,7 +7,7 @@ defmodule Jiraffe.ResultsPage do
           max_results: non_neg_integer(),
           total: non_neg_integer(),
           is_last: boolean(),
-          values: [term()]
+          values: [term()] | map()
         }
 
   defstruct start_at: 0,
@@ -92,10 +92,22 @@ defmodule Jiraffe.Pagination do
     ```
   """
 
+  @callback page(
+              Jiraffe.client(),
+              term()
+            ) :: {:ok, Jiraffe.ResultsPage.t()} | {:error, Jiraffe.Error.t()}
+
+  @callback transform_values([term()]) :: [term()] | map()
+
   defmacro __using__(opts) do
     naming = Keyword.get(opts, :naming, [[]])
 
     quote do
+      @behaviour Jiraffe.Pagination
+
+      def transform_values(list), do: Enum.flat_map(list, & &1)
+      defoverridable transform_values: 1
+
       unquote(define_functions(naming))
     end
   end
@@ -147,8 +159,8 @@ defmodule Jiraffe.Pagination do
         def unquote(:"#{all_name}")(client, params) do
           values =
             apply(__MODULE__, unquote(:"#{stream_name}"), [client, params])
-            |> Stream.flat_map(fn page -> page.values end)
-            |> Enum.to_list()
+            |> Enum.into([], & &1.values)
+            |> __MODULE__.transform_values()
 
           {:ok, values}
         end
