@@ -7,7 +7,7 @@ defmodule Jiraffe.MixProject do
       app: :jiraffe,
       deps: deps(),
       description: description(),
-      elixir: "~> 1.15",
+      elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
       homepage_url: "https://github.com/AppLiger/jiraffe",
       name: "Jiraffe",
