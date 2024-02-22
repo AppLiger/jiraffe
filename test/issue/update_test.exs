@@ -11,6 +11,17 @@ defmodule Jiraffe.Issue.UpdateTest do
           method: :put,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
           body: "{\"fields\":{\"description\":\"Bar\",\"summary\":\"Foo\"}}",
+          query: []
+        } ->
+          json(
+            %{},
+            status: 204
+          )
+
+        %{
+          method: :put,
+          url: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
+          body: "{\"fields\":{\"description\":\"Bar\",\"summary\":\"Foo\"}}",
           query: [
             notifyUsers: true,
             overrideScreenSecurity: true,
@@ -19,7 +30,18 @@ defmodule Jiraffe.Issue.UpdateTest do
             expand: "names,schema"
           ]
         } ->
-          json(%{}, status: 204)
+          json(
+            %{
+              id: "10002",
+              key: "TST-1",
+              expand: "names,schema",
+              fields: %{
+                summary: "Foo",
+                description: "Bar"
+              }
+            },
+            status: 200
+          )
 
         %{
           method: :put,
@@ -43,8 +65,31 @@ defmodule Jiraffe.Issue.UpdateTest do
       {:ok, client: client}
     end
 
-    test "updates an issue", %{client: client} do
+    test "updates the issue", %{client: client} do
       assert {:ok, %{id: "10002"}} ==
+               Jiraffe.Issue.update(
+                 client,
+                 "10002",
+                 %{
+                   fields: %{
+                     summary: "Foo",
+                     description: "Bar"
+                   }
+                 }
+               )
+    end
+
+    test "updates and returns the issue", %{client: client} do
+      assert {:ok,
+              %Jiraffe.Issue{
+                id: "10002",
+                key: "TST-1",
+                expand: "names,schema",
+                fields: %{
+                  "description" => "Bar",
+                  "summary" => "Foo"
+                }
+              }} ==
                Jiraffe.Issue.update(
                  client,
                  "10002",

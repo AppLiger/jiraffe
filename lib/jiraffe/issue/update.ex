@@ -26,6 +26,9 @@ defmodule Jiraffe.Issue.Update do
            Issue.UpdateDetails.new(body),
            query: params
          ) do
+      {:ok, %{body: body, status: 200}} ->
+        {:ok, Jiraffe.Issue.new(body)}
+
       {:ok, %{body: _body, status: 204}} ->
         {:ok, %{id: id}}
 
