@@ -10,14 +10,14 @@ It provides a convenient way to make requests to Jira for creating, updating, or
 # Bearer authentication
 {:ok, issue} =
   Jiraffe.client("https://example.atlassian.net", "my-access-token")
-  |> Jiraffe.Issues.get("TEST-1")
+  |> Jiraffe.Issue.get("TEST-1")
 
 # Basic authentication
 {:ok, issue} =
   Jiraffe.client(
     "https://example.atlassian.net",
     basic: %{username: "test@example.net", password: "secret"}
-  ) |> Jiraffe.Issues.get("TEST-1")
+  ) |> Jiraffe.Issue.get("TEST-1")
 ```
 
 # Configuration

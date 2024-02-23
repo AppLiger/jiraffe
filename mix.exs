@@ -5,15 +5,17 @@ defmodule Jiraffe.MixProject do
   def project do
     [
       app: :jiraffe,
-      version: "0.0.1",
-      elixir: "~> 1.14",
-      elixirc_paths: elixirc_paths(Mix.env()),
-      start_permanent: Mix.env() == :prod,
       deps: deps(),
-      name: "Jiraffe",
       description: description(),
+      elixir: "~> 1.16",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      homepage_url: "https://github.com/AppLiger/jiraffe",
+      name: "Jiraffe",
       package: package(),
-      test_coverage: [ignore_modules: [JiraffeTest.Support]]
+      source_url: "https://github.com/AppLiger/jiraffe",
+      start_permanent: Mix.env() == :prod,
+      test_coverage: [ignore_modules: [JiraffeTest.Support]],
+      version: "0.1.0"
     ]
   end
 
@@ -44,9 +46,9 @@ defmodule Jiraffe.MixProject do
 
   defp package do
     [
-      name: "jiraffe",
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/AppLiger/jiraffe"}
+      links: %{"GitHub" => "https://github.com/AppLiger/jiraffe"},
+      name: "jiraffe"
     ]
   end
 

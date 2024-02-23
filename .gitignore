@@ -24,3 +24,6 @@ jiraffe-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore .DS_Store files created by macOS.
+.DS_Store
