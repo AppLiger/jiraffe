@@ -174,8 +174,15 @@ defmodule Jiraffe.Issue do
   @doc """
   Returns the edit screen fields for an issue that are visible to and editable by the user.
   """
-  @spec get_edit_metadata(client :: Jiraffe.client(), params :: get_edit_metadata_params()) ::
-          {:ok, Jiraffe.Issue.EditMetadata.t()} | {:error, Error.t()}
+  @spec get_edit_metadata(
+          client :: Jiraffe.Client.t(),
+          issue_id_or_key :: String.t(),
+          params :: [
+            override_screen_security: boolean(),
+            override_editable_flag: boolean()
+          ]
+        ) ::
+          {:ok, Issue.EditMetadata.t()} | {:error, Error.t()}
   defdelegate get_edit_metadata(client, issue_id_or_key, params \\ []),
     to: Issue.EditMetadata,
     as: :get
