@@ -16,7 +16,7 @@ defmodule Jiraffe.Agile.Sprint do
           goal: String.t()
         }
 
-  alias Jiraffe.{Error}
+  alias Jiraffe.Error
 
   defstruct [
     # The ID of the sprint

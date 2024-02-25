@@ -10,7 +10,7 @@ defmodule Jiraffe.Issue.Field.Metadata.Schema do
             system: nil,
             type: ""
 
-  def new(), do: %__MODULE__{}
+  def new, do: %__MODULE__{}
 
   def new(body) do
     %__MODULE__{
