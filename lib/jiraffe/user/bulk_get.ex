@@ -8,7 +8,7 @@ defmodule Jiraffe.User.BulkGet do
   @type account_id() :: String.t()
 
   @spec page(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: User.bulk_get_params()
         ) ::
           {:ok, ResultsPage.t()} | {:error, Error.t()}

@@ -10,9 +10,9 @@ defmodule Jiraffe.Issue.Field.Metadata.Schema do
             system: nil,
             type: ""
 
-  def new(), do: %__MODULE__{}
+  def new, do: %__MODULE__{}
 
-  def new(body) do
+  def new(body) when is_map(body) do
     %__MODULE__{
       configuration: Map.get(body, "configuration", %{}),
       custom: Map.get(body, "custom", ""),
@@ -22,4 +22,6 @@ defmodule Jiraffe.Issue.Field.Metadata.Schema do
       type: Map.get(body, "type", "")
     }
   end
+
+  def new(_), do: new()
 end
