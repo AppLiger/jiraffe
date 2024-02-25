@@ -15,7 +15,7 @@ defmodule Jiraffe.MixProject do
       source_url: "https://github.com/AppLiger/jiraffe",
       start_permanent: Mix.env() == :prod,
       test_coverage: [ignore_modules: [JiraffeTest.Support]],
-      version: "0.1.0"
+      version: "0.1.1"
     ]
   end
 
