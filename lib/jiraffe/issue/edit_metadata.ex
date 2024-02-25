@@ -3,7 +3,7 @@ defmodule Jiraffe.Issue.EditMetadata do
   This resource returns details of the edit screen fields for an issue that are visible to and editable by the user.
   """
 
-  alias Jiraffe.{Error, Issue}
+  alias Jiraffe.Error
   alias Jiraffe.Issue.Field.Metadata
 
   defstruct fields: %{}
@@ -28,7 +28,13 @@ defmodule Jiraffe.Issue.EditMetadata do
   end
 
   @doc false
-  @spec get(client :: Jiraffe.client(), params :: Issue.get_edit_metadata_params()) ::
+  @spec get(
+          client :: Jiraffe.Client.t(),
+          params :: [
+            override_screen_security: boolean(),
+            override_editable_flag: boolean()
+          ]
+        ) ::
           {:ok, t()} | {:error, Error.t()}
   def get(client, issue_id_or_key, params \\ []) do
     params =

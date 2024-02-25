@@ -98,8 +98,7 @@ defmodule Jiraffe.Issue.Link do
 
   @doc false
   @spec create(
-          client :: Jiraffe.client(),
-          params :: Issue.link_params()
+          client :: Jiraffe.Client.t(),
         ) :: {:ok, t()} | {:error, Exception.t()}
   def create(client, params) do
     body =

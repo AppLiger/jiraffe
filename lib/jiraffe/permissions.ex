@@ -59,7 +59,7 @@ defmodule Jiraffe.Permissions do
   """
 
   @spec my_permissions(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           params :: my_permissions_params()
         ) :: {:ok, map()} | {:error, Error.t()}
   def my_permissions(client, params) do

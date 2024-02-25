@@ -4,7 +4,7 @@ defmodule Jiraffe.Issue.Update do
   alias Jiraffe.{Error, Issue}
 
   @spec update(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           id :: String.t(),
           body :: Issue.UpdateDetails.t(),
           params :: Issue.update_params()

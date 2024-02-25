@@ -15,7 +15,7 @@ defmodule Jiraffe.Agile.Issue do
   If `rank_custom_field_id` is not defined, the default rank field will be used.
   """
   @spec rank_after_issue(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           issue_id :: String.t(),
           issue_ids :: list(String.t()),
           params :: rank_params()
@@ -27,7 +27,7 @@ defmodule Jiraffe.Agile.Issue do
   If `rank_custom_field_id` is not defined, the default rank field will be used.
   """
   @spec rank_before_issue(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           issue_id :: String.t(),
           issue_ids :: list(String.t()),
           params :: rank_params()
