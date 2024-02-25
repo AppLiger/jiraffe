@@ -26,7 +26,7 @@ defmodule Jiraffe.Issue.BulkCreate do
   alias Jiraffe.Error
 
   @spec create(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           updates :: [Jiraffe.Issue.UpdateDetails.t()]
         ) :: {:ok, Jiraffe.Issue.BulkCreateResult.t()} | {:error, Error.t()}
   def create(client, body) do

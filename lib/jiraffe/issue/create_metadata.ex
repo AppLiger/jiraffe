@@ -30,7 +30,16 @@ defmodule Jiraffe.Issue.CreateMetadata do
   end
 
   @doc false
-  @spec get(client :: Jiraffe.client(), params :: Jiraffe.Issue.get_create_metadata_params()) ::
+  @spec get(
+          client :: Jiraffe.Client.t(),
+          params :: [
+            project_ids: list(non_neg_integer()),
+            project_keys: list(String.t()),
+            issue_type_ids: list(non_neg_integer()),
+            issue_type_names: list(String.t()),
+            expand: String.t()
+          ]
+        ) ::
           {:ok, t()} | {:error, Error.t()}
   def get(client, params) do
     params =

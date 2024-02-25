@@ -42,34 +42,6 @@ defmodule Jiraffe.Issue do
           fields: map()
         }
 
-  @type update_params() :: [
-          notify_users: boolean(),
-          override_screen_security: boolean(),
-          override_editable_flag: boolean(),
-          return_issue: boolean(),
-          expand: String.t()
-        ]
-
-  @type get_create_metadata_params() :: [
-          project_ids: list(non_neg_integer()),
-          project_keys: list(String.t()),
-          issue_type_ids: list(non_neg_integer()),
-          issue_type_names: list(String.t()),
-          expand: String.t()
-        ]
-
-  @type get_edit_metadata_params() :: [
-          override_screen_security: boolean(),
-          override_editable_flag: boolean()
-        ]
-
-  @type link_params() :: [
-          type_id: String.t(),
-          inward_issue_id: String.t(),
-          outward_issue_id: String.t(),
-          comment: map()
-        ]
-
   @type jql_search_params() :: [
           jql: String.t(),
           start_at: non_neg_integer(),
@@ -110,11 +82,31 @@ defmodule Jiraffe.Issue do
   [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-issueidorkey-get)
   """
   @spec get(
-          client :: Jiraffe.client(),
-          id_or_key :: binary(),
-          params :: Keyword.t()
+          client :: Jiraffe.Client.t(),
+          id_or_key :: String.t()
+        ) :: {:ok, t()} | {:error, Error.t()}
+  @spec get(
+          client :: Jiraffe.Client.t(),
+          id_or_key :: String.t(),
+          params :: [
+            fields: list(String.t()),
+            expand: String.t(),
+            properties: list(String.t()),
+            fields_by_keys: boolean(),
+            update_history: boolean()
+          ]
         ) :: {:ok, t()} | {:error, Error.t()}
   def get(client, id_or_key, params \\ []) do
+    params =
+      [
+        fields: Keyword.get(params, :fields),
+        expand: Keyword.get(params, :expand),
+        properties: Keyword.get(params, :properties),
+        fields_by_keys: Keyword.get(params, :fields_by_keys),
+        update_history: Keyword.get(params, :update_history)
+      ]
+      |> Keyword.reject(fn {_, v} -> is_nil(v) end)
+
     case Jiraffe.get(client, "/rest/api/2/issue/" <> id_or_key, query: params) do
       {:ok, %{status: 200, body: body}} ->
         {:ok, new(body)}
@@ -131,11 +123,23 @@ defmodule Jiraffe.Issue do
   Edits an issue. A transition may be applied and issue properties updated as part of the edit.
   """
   @spec update(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           id :: String.t(),
-          body :: Issue.UpdateDetails.t(),
-          params :: update_params()
-        ) :: {:ok, %{id: String.t()}} | {:error, Error.t()}
+          body :: %{
+            optional(:transition) => map(),
+            optional(:fields) => map(),
+            optional(:update) => map(),
+            optional(:history_metadata) => map(),
+            optional(:properties) => list(term())
+          },
+          params :: [
+            notify_users: boolean(),
+            override_screen_security: boolean(),
+            override_editable_flag: boolean(),
+            return_issue: boolean(),
+            expand: String.t()
+          ]
+        ) :: {:ok, t()} | {:ok, term()} | {:error, Error.t()}
   defdelegate update(client, id, body, params \\ []), to: Issue.Update
 
   @doc """
@@ -144,8 +148,16 @@ defmodule Jiraffe.Issue do
   [Reference](https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-bulk-post)
   """
   @spec bulk_create(
-          client :: Jiraffe.client(),
-          updates :: [Jiraffe.Issue.UpdateDetails.t()]
+          client :: Jiraffe.Client.t(),
+          updates :: [
+            %{
+              optional(:transition) => map(),
+              optional(:fields) => map(),
+              optional(:update) => map(),
+              optional(:history_metadata) => map(),
+              optional(:properties) => list(term())
+            }
+          ]
         ) :: {:ok, Jiraffe.Issue.BulkCreateResult.t()} | {:error, Error.t()}
   defdelegate bulk_create(client, updates), to: Issue.BulkCreate, as: :create
 
@@ -167,15 +179,33 @@ defmodule Jiraffe.Issue do
         }
       }
   """
-  @spec get_create_metadata(client :: Jiraffe.client(), params :: get_create_metadata_params()) ::
-          {:ok, t()} | {:error, Error.t()}
-  defdelegate get_create_metadata(client, params), to: Issue.CreateMetadata, as: :get
+  @spec get_create_metadata(
+          client :: Jiraffe.Client.t(),
+          params :: [
+            project_ids: list(non_neg_integer()),
+            project_keys: list(String.t()),
+            issue_type_ids: list(non_neg_integer()),
+            issue_type_names: list(String.t()),
+            expand: String.t()
+          ]
+        ) ::
+          {:ok, Issue.CreateMetadata.t()} | {:error, Error.t()}
+  defdelegate get_create_metadata(client, params),
+    to: Issue.CreateMetadata,
+    as: :get
 
   @doc """
   Returns the edit screen fields for an issue that are visible to and editable by the user.
   """
-  @spec get_edit_metadata(client :: Jiraffe.client(), params :: get_edit_metadata_params()) ::
-          {:ok, Jiraffe.Issue.EditMetadata.t()} | {:error, Error.t()}
+  @spec get_edit_metadata(
+          client :: Jiraffe.Client.t(),
+          issue_id_or_key :: String.t(),
+          params :: [
+            override_screen_security: boolean(),
+            override_editable_flag: boolean()
+          ]
+        ) ::
+          {:ok, Issue.EditMetadata.t()} | {:error, Error.t()}
   defdelegate get_edit_metadata(client, issue_id_or_key, params \\ []),
     to: Issue.EditMetadata,
     as: :get
@@ -236,7 +266,7 @@ defmodule Jiraffe.Issue do
       ]}}
   """
   @spec jql_search(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: jql_search_params()
         ) :: {:ok, t()} | {:error, Error.t()}
   defdelegate jql_search(client, params), to: Issue.JqlSearch, as: :page
@@ -246,7 +276,7 @@ defmodule Jiraffe.Issue do
   Returns the issues found using the JQL query.
   """
   @spec jql_search_all(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: jql_search_params()
         ) :: Enum.t()
   defdelegate jql_search_stream(client, params), to: Issue.JqlSearch, as: :stream
@@ -256,7 +286,7 @@ defmodule Jiraffe.Issue do
   Returns the issues found using the JQL query.
   """
   @spec jql_search_all(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: jql_search_params()
         ) ::
           {:ok, [t()]} | {:error, Error.t()}
@@ -268,8 +298,13 @@ defmodule Jiraffe.Issue do
   and optionally add a comment to the from (outward) issue.
   """
   @spec link(
-          client :: Jiraffe.client(),
-          params :: link_params()
+          client :: Jiraffe.Client.t(),
+          params :: [
+            type_id: String.t(),
+            inward_issue_id: String.t(),
+            outward_issue_id: String.t(),
+            comment: map()
+          ]
         ) :: {:ok, Issue.Link.t()} | {:error, Exception.t()}
   defdelegate link(client, params), to: Issue.Link, as: :create
 end

@@ -4,10 +4,21 @@ defmodule Jiraffe.Issue.JqlSearch do
   alias Jiraffe.{Issue, Error}
   use Jiraffe.Pagination
 
+  @type jql_search_params() :: [
+          jql: String.t(),
+          start_at: non_neg_integer(),
+          max_results: non_neg_integer(),
+          validate_query: String.t(),
+          fields: list(String.t()),
+          expand: String.t(),
+          properties: list(String.t()),
+          fields_by_keys: boolean()
+        ]
+
   @impl Jiraffe.Pagination
   @spec page(
-          Jiraffe.client(),
-          params :: Issue.jql_search_params()
+          Jiraffe.Client.t(),
+          params :: jql_search_params()
         ) ::
           {:ok, Jiraffe.ResultsPage.t()} | {:error, Error.t()}
   def page(client, params) do

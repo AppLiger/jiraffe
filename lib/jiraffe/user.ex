@@ -74,7 +74,7 @@ defmodule Jiraffe.User do
   """
 
   @spec bulk_get(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: bulk_get_params()
         ) ::
           {:ok, ResultsPage} | {:error, Error.t()}
@@ -85,7 +85,7 @@ defmodule Jiraffe.User do
   """
 
   @spec bulk_get_stream(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: bulk_get_params()
         ) ::
           Enum.t() | {:error, Error.t()}
@@ -96,7 +96,7 @@ defmodule Jiraffe.User do
   """
 
   @spec bulk_get_all(
-          Jiraffe.client(),
+          Jiraffe.Client.t(),
           params :: bulk_get_params()
         ) ::
           {:ok, [t()]} | {:error, Error.t()}

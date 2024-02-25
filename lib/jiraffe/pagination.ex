@@ -56,7 +56,7 @@ defmodule Jiraffe.Pagination do
 
     - Use `use Jiraffe.Pagination` in your module.
     - Define a function that returns a page of results.
-    The function should accept a `Jiraffe.client()` and a `Keyword.t()` as arguments and return a `{:ok, Jiraffe.Pagination.Page.t()}` or `{:error, Jiraffe.Error.t()}`.
+    The function should accept a `Jiraffe.Client.t()` and a `Keyword.t()` as arguments and return a `{:ok, Jiraffe.Pagination.Page.t()}` or `{:error, Jiraffe.Error.t()}`.
     - In your module, you'll get a function (`all/2`) that returns a list of all results and a function (`stream/2`) that returns a stream of pages.
     - You can customize the names of these functions by passing a list of options to `use Jiraffe.Pagination`:
       - `naming: [[page_fn: :get_page, stream: :stream_name, all: :all_name]]`
@@ -93,7 +93,7 @@ defmodule Jiraffe.Pagination do
   """
 
   @callback page(
-              Jiraffe.client(),
+              Jiraffe.Client.t(),
               term()
             ) :: {:ok, Jiraffe.ResultsPage.t()} | {:error, Jiraffe.Error.t()}
 

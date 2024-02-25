@@ -16,7 +16,7 @@ defmodule Jiraffe.Agile.Sprint do
           goal: String.t()
         }
 
-  alias Jiraffe.{Error}
+  alias Jiraffe.Error
 
   defstruct [
     # The ID of the sprint
@@ -66,7 +66,7 @@ defmodule Jiraffe.Agile.Sprint do
   or view at least one of the issues in the sprint.
   """
   @spec get(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           id :: String.t()
         ) :: {:ok, t()} | {:error, Error.t()}
   def get(client, sprint_id) do

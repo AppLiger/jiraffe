@@ -6,7 +6,7 @@ defmodule Jiraffe.Agile.Issue.Rank do
   require Logger
 
   @spec rank_after_issue(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           issue_id :: String.t(),
           issues :: list(String.t()),
           params :: Agile.Issue.rank_params()
@@ -24,7 +24,7 @@ defmodule Jiraffe.Agile.Issue.Rank do
   end
 
   @spec rank_before_issue(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           issue_id :: String.t(),
           issues :: list(String.t()),
           params :: Agile.Issue.rank_params()
@@ -42,7 +42,7 @@ defmodule Jiraffe.Agile.Issue.Rank do
   end
 
   @spec rank(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           body ::
             %{
               rankAfterIssue: String.t() | nil,

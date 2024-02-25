@@ -1,6 +1,8 @@
 defmodule Jiraffe.Client do
   @moduledoc false
 
+  @type t() :: Tesla.Client.t()
+
   def new(base_url, oauth2: %{access_token: token}) do
     new_bearer(base_url, token)
   end

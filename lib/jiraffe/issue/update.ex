@@ -4,11 +4,26 @@ defmodule Jiraffe.Issue.Update do
   alias Jiraffe.{Error, Issue}
 
   @spec update(
-          client :: Jiraffe.client(),
+          client :: Jiraffe.Client.t(),
           id :: String.t(),
-          body :: Issue.UpdateDetails.t(),
-          params :: Issue.update_params()
-        ) :: {:ok, %{id: String.t()}} | {:error, Error.t()}
+          body ::
+            %{
+              optional(:transition) => map(),
+              optional(:fields) => map(),
+              optional(:update) => map(),
+              optional(:history_metadata) => map(),
+              optional(:properties) => list(term())
+            },
+          params :: [
+            notify_users: boolean(),
+            override_screen_security: boolean(),
+            override_editable_flag: boolean(),
+            return_issue: boolean(),
+            expand: String.t()
+          ]
+        ) ::
+          {:ok, Jiraffe.Issue.t()}
+          | {:error, Error.t()}
   def update(client, id, body, params \\ []) do
     params =
       [
