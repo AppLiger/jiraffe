@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Token generation
 - QSH module
 
+## [0.1.1] - 2024-02-25
+
+### Fixed
+
+- Issue.get_edit_metadata specification
+- Jiraffe client function and type name collision
+- Some warnings
+
+### Changed
+
+- Moved some types inside the corresponding specifications
+
+### Added
+
+- A guard agains wrong params in Issue.Field.Metadata.Schema.new
+
 ## [0.1.0] - 2024-02-23
 
 ### Changed
