@@ -44,7 +44,6 @@ defmodule Jiraffe.Issue.JqlSearchTest do
           startAt: 0,
           maxResults: 1,
           total: 2,
-          isLast: false,
           issues: [Enum.at(@issues, 0)],
           names: %{
             "summary" => "Summary"
@@ -59,7 +58,6 @@ defmodule Jiraffe.Issue.JqlSearchTest do
         json(%{
           startAt: 0,
           maxResults: 1,
-          isLast: false,
           total: 2,
           issues: [Enum.at(@issues, 0)],
           names: %{
@@ -99,7 +97,7 @@ defmodule Jiraffe.Issue.JqlSearchTest do
     {:ok, client: client}
   end
 
-  describe "search_jql/3" do
+  describe "jql_search/3" do
     test "returns a page issues found using the JQL query", %{client: client} do
       assert {:ok,
               %ResultsPage{
@@ -138,7 +136,7 @@ defmodule Jiraffe.Issue.JqlSearchTest do
     end
   end
 
-  describe "search_jql_all/2" do
+  describe "jql_search_all/2" do
     test "returns all issues found using the JQL query", %{client: client} do
       assert {:ok,
               %{
@@ -168,7 +166,7 @@ defmodule Jiraffe.Issue.JqlSearchTest do
     end
   end
 
-  describe "search_jql_stream/3" do
+  describe "jql_search_stream/3" do
     test "returns stream of all issues found using the JQL query", %{client: client} do
       assert [
                %ResultsPage{

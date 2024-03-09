@@ -10,13 +10,15 @@ defmodule Jiraffe.PaginationTest do
   def page(client, params) do
     case Jiraffe.get(client, "/test", query: params) do
       {:ok, %{body: body}} ->
+        values = Map.get(body, "values", [])
+
         {:ok,
          %{
            start_at: Map.get(body, "startAt", 0),
-           max_results: Map.get(body, "maxResults", 1),
-           is_last: Map.get(body, "isLast", true),
+           max_results: Map.get(body, "maxResults", Enum.count(values)),
+           is_last: Map.get(body, "isLast", Enum.empty?(values)),
            total: Map.get(body, "total", 0),
-           values: Map.get(body, "values", [])
+           values: values
          }}
 
       {:error, error} ->
@@ -37,7 +39,6 @@ defmodule Jiraffe.PaginationTest do
             %{
               startAt: 0,
               maxResults: 1,
-              isLast: false,
               total: 2,
               values: ["Page 1: A", "Page 1: B"]
             },
@@ -102,7 +103,7 @@ defmodule Jiraffe.PaginationTest do
       assert [
                %{
                  is_last: true,
-                 max_results: 1,
+                 max_results: 0,
                  start_at: 0,
                  total: 0,
                  values: []

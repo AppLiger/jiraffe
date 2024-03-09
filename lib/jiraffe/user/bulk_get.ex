@@ -27,13 +27,15 @@ defmodule Jiraffe.User.BulkGet do
            query: params
          ) do
       {:ok, %{body: body, status: 200}} ->
+        users = Map.get(body, "values", []) |> Enum.map(&User.new/1)
+
         {:ok,
          %ResultsPage{
            start_at: Map.get(body, "startAt", 0),
-           max_results: Map.get(body, "maxResults", 50),
-           is_last: Map.get(body, "isLast", true),
+           max_results: Map.get(body, "maxResults", Enum.count(users)),
+           is_last: Map.get(body, "isLast", Enum.empty?(users)),
            total: Map.get(body, "total", 0),
-           values: Map.get(body, "values", []) |> Enum.map(&User.new/1)
+           values: users
          }}
 
       {:ok, %{body: body}} ->

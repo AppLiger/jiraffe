@@ -37,14 +37,16 @@ defmodule Jiraffe.Issue.JqlSearch do
 
     case Jiraffe.get(client, "/rest/api/2/search", query: params) do
       {:ok, %{status: 200, body: body}} ->
+        issues = Map.get(body, "issues", []) |> Enum.map(&Issue.new/1)
+
         {:ok,
          %Jiraffe.ResultsPage{
            start_at: Map.get(body, "startAt", 0),
-           max_results: Map.get(body, "maxResults", 50),
-           is_last: Map.get(body, "isLast", true),
+           max_results: Map.get(body, "maxResults", Enum.count(issues)),
+           is_last: Map.get(body, "isLast", Enum.empty?(issues)),
            total: Map.get(body, "total", 0),
            values: %{
-             issues: Map.get(body, "issues", []) |> Enum.map(&Issue.new/1),
+             issues: issues,
              names: Map.get(body, "names", %{}),
              schema: Map.get(body, "schema", %{})
            }
