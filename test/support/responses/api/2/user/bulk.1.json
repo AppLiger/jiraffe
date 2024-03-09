@@ -2,7 +2,6 @@
   "maxResults": 1,
   "startAt": 0,
   "total": 2,
-  "isLast": false,
   "values": [
     {
       "self": "https://your-domain.atlassian.net/rest/api/2/user?accountId=5b10a2844c20165700ede21g",

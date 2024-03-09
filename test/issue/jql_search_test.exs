@@ -58,7 +58,6 @@ defmodule Jiraffe.Issue.JqlSearchTest do
         json(%{
           startAt: 0,
           maxResults: 1,
-          isLast: false,
           total: 2,
           issues: [Enum.at(@issues, 0)],
           names: %{
