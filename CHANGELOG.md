@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Token generation
 - QSH module
 
+## [0.1.2] - 2024-03-09
+
+### Fixed
+
+- Pagination in general
+- Some test case descriptions
+
 ## [0.1.1] - 2024-02-25
 
 ### Fixed
