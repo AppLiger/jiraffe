@@ -4,6 +4,9 @@
 	"name": "Jiraffe",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/base:1.0-ubuntu-22.04",
+	"containerEnv": {
+		"HOME": "/home/vscode"
+	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/elixir-asdf:2": {
