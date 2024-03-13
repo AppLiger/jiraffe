@@ -5,6 +5,7 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/base:1.0-ubuntu-22.04",
 	"containerEnv": {
+		"ELIXIR_ERL_OPTIONS": "+fnu",
 		"HOME": "/home/vscode"
 	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
