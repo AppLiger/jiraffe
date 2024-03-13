@@ -13,6 +13,9 @@
 		"ghcr.io/devcontainers-contrib/features/elixir-asdf:2": {
 			"elixirVersion": "1.16.1-otp-26",
 			"erlangVersion": "26.2.2"
+		},
+		"ghcr.io/devcontainers-contrib/features/pre-commit:2": {
+			"version": "3.6.2"
 		}
 	},
 	// Configure tool-specific properties.
