@@ -1,0 +1,46 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        args:
+          - --markdown-linebreak-ext=md
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: no-commit-to-branch
+        args:
+          - --branch
+          - main
+          - --branch
+          - develop
+  - repo: local
+    hooks:
+      - id: mix-compile
+        name: check for compilation warnings
+        entry: mix compile --force --warnings-as-errors
+        language: system
+        pass_filenames: false
+        types:
+          - elixir
+
+      - id: mix-test
+        name: unit test
+        entry: mix test
+        language: system
+        pass_filenames: false
+        types:
+          - elixir
+
+      - id: mix-credo
+        name: run static code analysis
+        entry: mix credo --format oneline --min-priority higher
+        language: system
+        types:
+          - elixir
+
+      - id: mix-format
+        name: format source code
+        entry: mix format
+        language: system
+        types:
+          - elixir
