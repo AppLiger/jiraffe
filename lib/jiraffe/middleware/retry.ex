@@ -1,23 +1,20 @@
 defmodule Jiraffe.Middleware.Retry do
   @moduledoc """
-  Retry using exponential backoff and full jitter.
+  Retry request optionally making delays between attempts.
 
-  By defaults, this middleware only retries in the case of connection errors (`nxdomain`, `connrefused`, etc).
+  ## Deciding whether to retry
+
+  By default, this middleware only retries in the case of connection errors (`nxdomain`, `connrefused`, etc).
   Application error checking for retry can be customized through `:should_retry` option.
 
-  ## Backoff algorithm
+  ## Delaying retries
 
-  The backoff algorithm optimizes for tight bounds on completing a request successfully.
-  It does this by first calculating an exponential backoff factor based on the
-  number of retries that have been performed.  It then multiplies this factor against
-  the base delay. The total maximum delay is found by taking the minimum of either
-  the calculated delay or the maximum delay specified. This creates an upper bound
-  on the maximum delay we can see.
+  To compute the delay between attemps strategies from `:delay_strategies` are consulted one by one.
 
-  In order to find the actual delay value we apply additive noise which is proportional
-  to the current desired delay. This ensures that the actual delay is kept within
-  the expected order of magnitude, while still having some randomness, which ensures
-  that our retried requests don't "harmonize" making it harder for the downstream service to heal.
+  The first non-`nil` result will be used as a delay, so the order of strategies matters.
+  If all the strategies return `nil`, or no strategies are configured, no delay between retries is made.
+
+  Each delay strategy module must implement `Jiraffe.Middleware.Retry.Delay` behavior.
 
   ## Examples
 
@@ -26,16 +23,18 @@ defmodule Jiraffe.Middleware.Retry do
     use Tesla
 
     plug Jiraffe.Middleware.Retry,
-      delay: 500,
       max_retries: 10,
-      max_delay: 4_000,
+      delay_strategies: [
+        {Jiraffe.Middleware.Retry.Delay.ExponentialBackoff, delay: 500, max_delay: 4_000}
+      ],
       should_retry: fn
         {:ok, %{status: status}} when status in [400, 500] -> true
         {:ok, _} -> false
         {:error, _} -> true
       end
-      # or
-      plug Jiraffe.Middleware.Retry, should_retry: fn
+    # or
+    plug Jiraffe.Middleware.Retry,
+      should_retry: fn
         {:ok, %{status: status}}, _env, _context when status in [400, 500] -> true
         {:ok, _reason}, _env, _context -> false
         {:error, _reason}, %Tesla.Env{method: :post}, _context -> false
@@ -47,23 +46,18 @@ defmodule Jiraffe.Middleware.Retry do
 
   ## Options
 
-  - `:delay` - The base delay in milliseconds (positive integer, defaults to 50)
+  - `:delay_strategies` - list of strategies computing the delay between retry attempts
+     (list, defaults to an empty list)
   - `:max_retries` - maximum number of retries (non-negative integer, defaults to 5)
-  - `:max_delay` - maximum delay in milliseconds (positive integer, defaults to 5000)
   - `:should_retry` - function with an arity of 1 or 3 used to determine if the request should
-      be retried the first argument is the result, the second is the env and the third is
+      be retried; the first argument is the result, the second is the env and the third is
       the context: options + `:retries` (defaults to a match on `{:error, _reason}`)
-  - `:jitter_factor` - additive noise proportionality constant
-      (float between 0 and 1, defaults to 0.2)
   """
 
   @behaviour Tesla.Middleware
 
   @defaults [
-    delay: 50,
-    max_retries: 5,
-    max_delay: 5_000,
-    jitter_factor: 0.2
+    max_retries: 5
   ]
 
   @impl Tesla.Middleware
@@ -72,11 +66,9 @@ defmodule Jiraffe.Middleware.Retry do
 
     context = %{
       retries: 0,
-      delay: integer_opt!(opts, :delay, 1),
       max_retries: integer_opt!(opts, :max_retries, 0),
-      max_delay: integer_opt!(opts, :max_delay, 1),
       should_retry: should_retry_opt!(opts),
-      jitter_factor: float_opt!(opts, :jitter_factor, 0, 1)
+      delay_strategies: delay_strategies_opt!(opts)
     }
 
     retry(env, next, context)
@@ -109,38 +101,24 @@ defmodule Jiraffe.Middleware.Retry do
   end
 
   defp do_retry(env, next, context) do
-    backoff(context.max_delay, context.delay, context.retries, context.jitter_factor)
+    # Find the first non-nil delay
+    delay =
+      Enum.find_value(context.delay_strategies, fn {module, opts} ->
+        apply(module, :compute, [env, context.retries, opts])
+      end)
+
+    if delay do
+      :timer.sleep(delay)
+    end
+
     context = update_in(context, [:retries], &(&1 + 1))
     retry(env, next, context)
-  end
-
-  # Exponential backoff with jitter
-  defp backoff(cap, base, attempt, jitter_factor) do
-    factor = Bitwise.bsl(1, attempt)
-    max_sleep = min(cap, base * factor)
-
-    # This ensures that the delay's order of magnitude is kept intact, while still having some jitter.
-    # Generates a value x where 1 - jitter_factor <= x <= 1
-    jitter = 1 - jitter_factor * :rand.uniform()
-
-    # The actual delay is in the range max_sleep * (1 - jitter_factor) <= delay <= max_sleep
-    delay = trunc(max_sleep * jitter)
-
-    :timer.sleep(delay)
   end
 
   defp integer_opt!(opts, key, min) do
     case Keyword.fetch(opts, key) do
       {:ok, value} when is_integer(value) and value >= min -> value
       {:ok, invalid} -> invalid_integer(key, invalid, min)
-      :error -> @defaults[key]
-    end
-  end
-
-  defp float_opt!(opts, key, min, max) do
-    case Keyword.fetch(opts, key) do
-      {:ok, value} when is_float(value) and value >= min and value <= max -> value
-      {:ok, invalid} -> invalid_float(key, invalid, min, max)
       :error -> @defaults[key]
     end
   end
@@ -158,15 +136,40 @@ defmodule Jiraffe.Middleware.Retry do
     end
   end
 
-  defp invalid_integer(key, value, min) do
-    raise(ArgumentError, "expected :#{key} to be an integer >= #{min}, got #{inspect(value)}")
+  defp delay_strategies_opt!(opts) do
+    strategies = Keyword.get(opts, :delay_strategies, [])
+
+    if not is_list(strategies) do
+      raise(ArgumentError, "expected :delay_strategies to be a list, got #{inspect(strategies)}")
+    end
+
+    Enum.map(strategies, &delay_strategy/1)
   end
 
-  defp invalid_float(key, value, min, max) do
-    raise(
-      ArgumentError,
-      "expected :#{key} to be a float >= #{min} and <= #{max}, got #{inspect(value)}"
-    )
+  defp delay_strategy({module}), do: delay_strategy({module, []})
+
+  defp delay_strategy({module, opts}) do
+    case Code.ensure_loaded(module) do
+      {:module, _} ->
+        if not function_exported?(module, :compute, 3) do
+          raise(
+            ArgumentError,
+            ~s(expected :delay_strategies module "#{module}" to export "compute/3" function)
+          )
+        end
+
+        {module, opts}
+
+      {:error, error} ->
+        raise(
+          ArgumentError,
+          ~s(expected to be able to load :delay_strategies module "#{module}", got :#{error})
+        )
+    end
+  end
+
+  defp invalid_integer(key, value, min) do
+    raise(ArgumentError, "expected :#{key} to be an integer >= #{min}, got #{inspect(value)}")
   end
 
   defp invalid_should_retry_fun(value) do
