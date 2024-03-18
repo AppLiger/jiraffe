@@ -36,6 +36,7 @@ defmodule Jiraffe.MixProject do
       {:hackney, "~> 1.17"},
       # required by JSON middleware
       {:jason, ">= 1.0.0"},
+      {:mock, "~> 0.3.8", only: :test},
       {:tesla, "~> 1.4"}
     ]
   end

@@ -1,6 +1,8 @@
 defmodule Jiraffe.Middleware.RetryTest do
   use ExUnit.Case, async: false
 
+  import Mock
+
   defmodule LaggyAdapter do
     def start_link, do: Agent.start_link(fn -> 0 end, name: __MODULE__)
     def reset(), do: Agent.update(__MODULE__, fn _ -> 0 end)
@@ -69,6 +71,12 @@ defmodule Jiraffe.Middleware.RetryTest do
 
   setup do
     LaggyAdapter.reset()
+    :ok
+  end
+
+  setup_with_mocks [
+    {:timer, [:passthrough, :unstick], [sleep: fn _time -> :ok end]}
+  ] do
     :ok
   end
 
