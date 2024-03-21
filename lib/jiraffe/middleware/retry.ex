@@ -26,6 +26,7 @@ defmodule Jiraffe.Middleware.Retry do
       max_retries: 10,
       delay_strategies: [
         {Jiraffe.Middleware.Retry.Delay.RetryAfter},
+        {Jiraffe.Middleware.Retry.Delay.RateLimitReset},
         {Jiraffe.Middleware.Retry.Delay.ExponentialBackoff, delay: 500, max_delay: 4_000}
       ],
       should_retry: fn
