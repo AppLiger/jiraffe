@@ -1,0 +1,43 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "develop"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@a23b1fc4452a892cf3e92cbc2c405256cd6c27ec # v1.17.3
+        with:
+          version-type: "strict"
+          version-file: ".tool-versions"
+          install-hex: true
+          install-rebar: true
+
+      - name: Restore dependencies cache
+        uses: actions/cache@13aacd865c20de90d75de3b17ebe84f7a17d57d2 # v4.0.0
+        with:
+          path: |
+            deps
+            _build/test
+            !_build/test/lib/jiraffe
+          key: ${{ runner.os }}-mix-${{ hashFiles('mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Run tests
+        run: mix test --include slow
