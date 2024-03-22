@@ -1,6 +1,7 @@
 defmodule Jiraffe.IssueTest do
   @moduledoc false
-  use ExUnit.Case
+  use Jiraffe.Support.TestCase
+
   doctest Jiraffe.Issue
 
   describe "new/1" do

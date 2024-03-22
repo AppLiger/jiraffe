@@ -1,9 +1,6 @@
 defmodule Jiraffe.Issue.BulkCreateTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
-  import JiraffeTest.Support
+  use Jiraffe.Support.TestCase
 
   describe "bulk_create/2" do
     setup do
@@ -11,8 +8,18 @@ defmodule Jiraffe.Issue.BulkCreateTest do
         %{
           method: :post,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/bulk",
-          body:
-            "{\"issueUpdates\":[{\"fields\":{\"description\":\"Bar\",\"project\":{\"key\":\"EX\"},\"summary\":\"Foo\",\"issuetype\":{\"name\":\"Bug\"}}}]}"
+          body: %{
+            issueUpdates: [
+              %{
+                fields: %{
+                  summary: "Foo",
+                  description: "Bar",
+                  project: %{key: "EX"},
+                  issuetype: %{name: "Bug"}
+                }
+              }
+            ]
+          }
         } ->
           json(
             jira_response_body("/api/2/issue/bulk"),
@@ -22,7 +29,11 @@ defmodule Jiraffe.Issue.BulkCreateTest do
         %{
           method: :post,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/bulk",
-          body: "{\"issueUpdates\":[{\"fields\":{\"status\":400}}]}"
+          body: %{
+            issueUpdates: [
+              %{fields: %{status: 400}}
+            ]
+          }
         } ->
           json(
             jira_response_body("/api/2/issue/bulk.error"),
@@ -32,7 +43,11 @@ defmodule Jiraffe.Issue.BulkCreateTest do
         %{
           method: :post,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/bulk",
-          body: "{\"issueUpdates\":[{\"fields\":{\"raise\":true}}]}"
+          body: %{
+            issueUpdates: [
+              %{fields: %{raise: true}}
+            ]
+          }
         } ->
           %Tesla.Error{reason: :something_went_wrong}
 

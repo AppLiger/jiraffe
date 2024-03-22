@@ -1,9 +1,6 @@
 defmodule Jiraffe.User.BulkGetTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
-  import JiraffeTest.Support
+  use Jiraffe.Support.TestCase
 
   alias Jiraffe.ResultsPage
 

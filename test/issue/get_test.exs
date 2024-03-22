@@ -1,9 +1,6 @@
 defmodule Jiraffe.Issue.GetTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
-  import JiraffeTest.Support
+  use Jiraffe.Support.TestCase
 
   describe "get/3" do
     setup do

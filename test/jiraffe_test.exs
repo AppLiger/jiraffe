@@ -1,9 +1,8 @@
 defmodule JiraffeTest do
   @moduledoc false
-  use ExUnit.Case
-  doctest Jiraffe
+  use Jiraffe.Support.TestCase
 
-  import Tesla.Mock
+  doctest Jiraffe
 
   describe "client/2 with a valid Base URL and a Token" do
     test "returns a Tesla client with correct Base URL and Bearer Authorization" do
@@ -152,11 +151,13 @@ defmodule JiraffeTest do
           "a-token"
         )
 
-      assert has_middleware?(client, Tesla.Middleware.Retry)
+      assert has_middleware?(client, Jiraffe.Middleware.Retry)
     end
 
     test "has Retry middleware with correct options when it is configured" do
-      Application.put_env(:jiraffe, :retry, delay: 1_234)
+      expected_options = [max_retries: 10]
+
+      Application.put_env(:jiraffe, :retry, expected_options)
 
       client =
         Jiraffe.client(
@@ -164,9 +165,9 @@ defmodule JiraffeTest do
           "a-token"
         )
 
-      {_, _, [options]} = find_middleware(client, Tesla.Middleware.Retry)
+      {_, _, [options]} = find_middleware(client, Jiraffe.Middleware.Retry)
 
-      assert Keyword.get(options, :delay) == 1_234
+      assert expected_options == options
     end
   end
 
@@ -210,16 +211,15 @@ defmodule JiraffeTest do
     end
   end
 
-  @tag :slow
   describe "default retryability behaviour" do
     setup do
       Application.put_env(:jiraffe, :retry, true)
 
       {:ok, requests_count_pid} = Agent.start_link(fn -> 0 end)
 
-      fn ->
+      on_exit(fn ->
         Application.put_env(:jiraffe, :retry, false)
-      end
+      end)
 
       mock(fn
         %{method: :get, url: "https://example.atlassian.net/test"} ->

@@ -1,8 +1,6 @@
 defmodule Jiraffe.Issue.LinkTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
+  use Jiraffe.Support.TestCase
 
   describe "link/2" do
     setup do
@@ -10,8 +8,11 @@ defmodule Jiraffe.Issue.LinkTest do
         %{
           method: :post,
           url: "https://your-domain.atlassian.net/rest/api/2/issueLink",
-          body:
-            "{\"type\":{\"id\":\"42\"},\"inwardIssue\":{\"id\":\"10001\"},\"outwardIssue\":{\"id\":\"10002\"}}"
+          body: %{
+            type: %{id: "42"},
+            inwardIssue: %{id: "10001"},
+            outwardIssue: %{id: "10002"}
+          }
         } ->
           json(
             %{},
@@ -21,8 +22,11 @@ defmodule Jiraffe.Issue.LinkTest do
         %{
           method: :post,
           url: "https://your-domain.atlassian.net/rest/api/2/issueLink",
-          body:
-            "{\"type\":{\"id\":\"fail\"},\"inwardIssue\":{\"id\":\"10001\"},\"outwardIssue\":{\"id\":\"10002\"}}"
+          body: %{
+            type: %{id: "fail"},
+            inwardIssue: %{id: "10001"},
+            outwardIssue: %{id: "10002"}
+          }
         } ->
           json(
             %{},
@@ -32,8 +36,11 @@ defmodule Jiraffe.Issue.LinkTest do
         %{
           method: :post,
           url: "https://your-domain.atlassian.net/rest/api/2/issueLink",
-          body:
-            "{\"type\":{\"id\":\"raise\"},\"inwardIssue\":{\"id\":\"10001\"},\"outwardIssue\":{\"id\":\"10002\"}}"
+          body: %{
+            type: %{id: "raise"},
+            inwardIssue: %{id: "10001"},
+            outwardIssue: %{id: "10002"}
+          }
         } ->
           %Tesla.Error{reason: :something_went_wrong}
 

@@ -68,12 +68,15 @@ defmodule Jiraffe.Client do
       true ->
         middleware ++
           [
-            {Tesla.Middleware.Retry,
-             delay: 1_000,
+            {Jiraffe.Middleware.Retry,
              max_retries: 3,
+             delay_strategies: [
+               {Jiraffe.Middleware.Retry.Delay.RetryAfter},
+               {Jiraffe.Middleware.Retry.Delay.RateLimitReset},
+               {Jiraffe.Middleware.Retry.Delay.ExponentialBackoff}
+             ],
              should_retry: fn
-               {:ok, %{status: status}}, _env, _context
-               when status in [429] ->
+               {:ok, %{status: 429}}, _env, _context ->
                  true
 
                _result, _env, _context ->
@@ -82,7 +85,7 @@ defmodule Jiraffe.Client do
           ]
 
       options when is_list(options) ->
-        middleware ++ [{Tesla.Middleware.Retry, options}]
+        middleware ++ [{Jiraffe.Middleware.Retry, options}]
 
       _ ->
         middleware
