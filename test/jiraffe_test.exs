@@ -212,16 +212,15 @@ defmodule JiraffeTest do
     end
   end
 
-  @tag :slow
   describe "default retryability behaviour" do
     setup do
       Application.put_env(:jiraffe, :retry, true)
 
       {:ok, requests_count_pid} = Agent.start_link(fn -> 0 end)
 
-      fn ->
+      on_exit(fn ->
         Application.put_env(:jiraffe, :retry, false)
-      end
+      end)
 
       mock(fn
         %{method: :get, url: "https://example.atlassian.net/test"} ->
