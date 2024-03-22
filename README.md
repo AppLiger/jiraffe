@@ -36,12 +36,14 @@ config :jiraffe, timeout: 30_000
 config :jiraffe, retry: true
 
 config :jiraffe, retry: [
-  delay: 2_000,
   max_retries: 20,
-  max_delay: 6_000,
+  delay_strategies: [
+    {Jiraffe.Middleware.Retry.Delay.RetryAfter},
+    {Jiraffe.Middleware.Retry.Delay.RateLimitReset},
+    {Jiraffe.Middleware.Retry.Delay.ExponentialBackoff, delay: 2_000, max_delay: 6_000}
+  ],
   should_retry: fn
-    {:ok, %{status: status}}, _env, %{retries: _retries}
-    when status in [429] ->
+    {:ok, %{status: 429}}, _env, %{retries: _retries} ->
       true
 
     _res, _env, _context ->
@@ -76,7 +78,7 @@ This project is licensed under the MIT License
 
 # 🚧 Important Notice 🚧
 
-We want to make you aware that this library is currently in its early stages of development and should be considered unstable. 
+We want to make you aware that this library is currently in its early stages of development and should be considered unstable.
 Until we reach our milestone release of version 1.0.0, please expect the following:
 
 - Rapid Changes: The API, features, and internal implementations may change significantly with each update.
