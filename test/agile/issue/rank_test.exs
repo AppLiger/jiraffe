@@ -8,28 +8,42 @@ defmodule Jiraffe.Agile.Issue.RankTest do
       %{
         method: :put,
         url: "https://your-domain.atlassian.net/rest/agile/1.0/issue/rank",
-        body: "{\"issues\":[\"B\",\"C\"],\"rankAfterIssue\":\"A\",\"rankCustomFieldId\":42}"
+        body: %{
+          issues: ["B", "C"],
+          rankAfterIssue: "A",
+          rankCustomFieldId: 42
+        }
       } ->
         %Tesla.Env{status: 204}
 
       %{
         method: :put,
         url: "https://your-domain.atlassian.net/rest/agile/1.0/issue/rank",
-        body: "{\"issues\":[\"B\",\"C\"],\"rankCustomFieldId\":42,\"rankBeforeIssue\":\"A\"}"
+        body: %{
+          issues: ["B", "C"],
+          rankCustomFieldId: 42,
+          rankBeforeIssue: "A"
+        }
       } ->
         %Tesla.Env{status: 204}
 
       %{
         method: :put,
         url: "https://your-domain.atlassian.net/rest/agile/1.0/issue/rank",
-        body: "{\"issues\":[\"B\",\"C\"],\"rankAfterIssue\":\"A\"}"
+        body: %{
+          issues: ["B", "C"],
+          rankAfterIssue: "A"
+        }
       } ->
         %Tesla.Env{status: 204}
 
       %{
         method: :put,
         url: "https://your-domain.atlassian.net/rest/agile/1.0/issue/rank",
-        body: "{\"issues\":[\"B\",\"C\"],\"rankBeforeIssue\":\"A\"}"
+        body: %{
+          issues: ["B", "C"],
+          rankBeforeIssue: "A"
+        }
       } ->
         %Tesla.Env{status: 204}
 

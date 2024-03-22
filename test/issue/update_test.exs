@@ -8,7 +8,12 @@ defmodule Jiraffe.Issue.UpdateTest do
         %{
           method: :put,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
-          body: "{\"fields\":{\"description\":\"Bar\",\"summary\":\"Foo\"}}",
+          body: %{
+            fields: %{
+              summary: "Foo",
+              description: "Bar"
+            }
+          },
           query: []
         } ->
           json(
@@ -19,7 +24,12 @@ defmodule Jiraffe.Issue.UpdateTest do
         %{
           method: :put,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/10002",
-          body: "{\"fields\":{\"description\":\"Bar\",\"summary\":\"Foo\"}}",
+          body: %{
+            fields: %{
+              summary: "Foo",
+              description: "Bar"
+            }
+          },
           query: [
             notifyUsers: true,
             overrideScreenSecurity: true,
@@ -44,7 +54,12 @@ defmodule Jiraffe.Issue.UpdateTest do
         %{
           method: :put,
           url: "https://your-domain.atlassian.net/rest/api/2/issue/WRONG-STATUS",
-          body: "{\"fields\":{\"description\":\"Bar\",\"summary\":\"Foo\"}}"
+          body: %{
+            fields: %{
+              summary: "Foo",
+              description: "Bar"
+            }
+          }
         } ->
           json(%{}, status: 400)
 

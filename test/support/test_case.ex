@@ -7,7 +7,7 @@ defmodule Jiraffe.Support.TestCase do
 
   using do
     quote do
-      import Tesla.Mock
+      import Tesla.Mock, except: [mock: 1]
       import Jiraffe.Support.TestHelpers
     end
   end
