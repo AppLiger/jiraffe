@@ -1,9 +1,8 @@
 defmodule JiraffeTest do
   @moduledoc false
-  use ExUnit.Case
-  doctest Jiraffe
+  use Jiraffe.Support.TestCase
 
-  import Tesla.Mock
+  doctest Jiraffe
 
   describe "client/2 with a valid Base URL and a Token" do
     test "returns a Tesla client with correct Base URL and Bearer Authorization" do

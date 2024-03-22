@@ -1,8 +1,6 @@
 defmodule Jiraffe.Issue.UpdateTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
+  use Jiraffe.Support.TestCase
 
   describe "update/2" do
     setup do

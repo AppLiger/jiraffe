@@ -1,5 +1,5 @@
 defmodule Jiraffe.Middleware.RetryTest do
-  use ExUnit.Case, async: false
+  use Jiraffe.Support.TestCase
 
   import Mock
 

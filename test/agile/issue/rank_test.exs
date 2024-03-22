@@ -1,9 +1,7 @@
 defmodule Jiraffe.Agile.Issue.RankTest do
   @moduledoc false
 
-  use ExUnit.Case
-
-  import Tesla.Mock
+  use Jiraffe.Support.TestCase
 
   setup do
     mock(fn

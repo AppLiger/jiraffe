@@ -1,5 +1,5 @@
 defmodule Jiraffe.Middleware.Retry.Delay.RetryAfterTest do
-  use ExUnit.Case
+  use Jiraffe.Support.TestCase
 
   import Jiraffe.Middleware.Retry.Delay.RetryAfter
 

@@ -1,6 +1,6 @@
-defmodule JiraffeTest.Support do
+defmodule Jiraffe.Support.TestHelpers do
   @moduledoc """
-  Test helpers
+  Helpers for defining test cases.
   """
 
   def jira_response_body(file) do

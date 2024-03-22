@@ -1,9 +1,6 @@
 defmodule Jiraffe.Issue.BulkCreateTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
-  import JiraffeTest.Support
+  use Jiraffe.Support.TestCase
 
   describe "bulk_create/2" do
     setup do

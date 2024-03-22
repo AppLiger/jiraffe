@@ -1,9 +1,8 @@
 defmodule Jiraffe.PaginationTest do
   @moduledoc false
-  use ExUnit.Case
-  doctest Jiraffe
+  use Jiraffe.Support.TestCase
 
-  import Tesla.Mock
+  doctest Jiraffe
 
   use Jiraffe.Pagination
 

@@ -1,6 +1,6 @@
 defmodule Jiraffe.ErrorTest do
   @moduledoc false
-  use ExUnit.Case
+  use Jiraffe.Support.TestCase
 
   doctest Jiraffe.Error
 

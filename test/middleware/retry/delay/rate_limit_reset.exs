@@ -1,5 +1,5 @@
 defmodule Jiraffe.Middleware.Retry.Delay.RateLimitResetTest do
-  use ExUnit.Case, async: false
+  use Jiraffe.Support.TestCase
 
   import Jiraffe.Middleware.Retry.Delay.RateLimitReset
 

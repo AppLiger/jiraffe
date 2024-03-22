@@ -1,6 +1,6 @@
 defmodule Jiraffe.UserTest do
   @moduledoc false
-  use ExUnit.Case
+  use Jiraffe.Support.TestCase
 
   describe "new/1" do
     test "converts" do

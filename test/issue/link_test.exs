@@ -1,8 +1,6 @@
 defmodule Jiraffe.Issue.LinkTest do
   @moduledoc false
-  use ExUnit.Case
-
-  import Tesla.Mock
+  use Jiraffe.Support.TestCase
 
   describe "link/2" do
     setup do
